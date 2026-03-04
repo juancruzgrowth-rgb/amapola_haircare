@@ -139,7 +139,7 @@ const Navbar = ({
         onClick={() => setActivePage('home')}
         className="flex items-center"
       >
-        <img src="/logo.png" alt="Amapola Haircare" className="h-14 md:h-16 w-auto object-contain drop-shadow-sm" referrerPolicy="no-referrer" />
+        <img src="/logo.png" alt="Amapola Haircare" className="h-20 md:h-28 w-auto object-contain drop-shadow-sm" referrerPolicy="no-referrer" />
       </button>
 
       {/* Desktop Links */}
@@ -235,7 +235,7 @@ const Footer = ({ setActivePage }: { setActivePage?: (p: string) => void }) => (
     <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
       <div className="col-span-1 md:col-span-1">
         <div className="flex items-center mb-6">
-          <img src="/logo.png" alt="Amapola Haircare" className="h-16 md:h-20 w-auto object-contain filter brightness-0 invert drop-shadow-sm" referrerPolicy="no-referrer" />
+          <img src="/logo.png" alt="Amapola Haircare" className="h-24 md:h-32 w-auto object-contain filter brightness-0 invert drop-shadow-sm" referrerPolicy="no-referrer" />
         </div>
         <p className="text-sm leading-relaxed mb-8">
           Cuidado capilar personalizado con ingredientes naturales. Tu cabello merece lo mejor.
@@ -314,7 +314,7 @@ const ProductCard = ({ product, onAddToCart }: { product: Product; onAddToCart: 
       )}
       <button
         onClick={() => onAddToCart(product)}
-        className="absolute bottom-4 right-4 h-12 px-4 bg-white rounded-xl flex items-center gap-2 shadow-lg opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 hover:bg-brand-primary hover:text-white"
+        className="absolute bottom-4 right-4 h-12 px-4 bg-white/95 md:bg-white rounded-xl flex items-center gap-2 shadow-lg opacity-100 translate-y-0 md:opacity-0 md:translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 hover:bg-brand-primary hover:text-white backdrop-blur-sm md:backdrop-blur-none"
       >
         <Plus size={18} />
         <span className="text-[10px] font-bold uppercase tracking-widest">Agregar al carrito</span>
