@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ShoppingBag, 
-  Menu, 
-  X, 
-  ChevronRight, 
-  Star, 
-  Check, 
-  ArrowRight, 
-  Instagram, 
-  MessageCircle, 
+import {
+  ShoppingBag,
+  Menu,
+  X,
+  ChevronRight,
+  Star,
+  Check,
+  ArrowRight,
+  Instagram,
+  MessageCircle,
   Mail,
   Clock,
   Gift,
@@ -20,13 +20,55 @@ import {
   Play,
   ChevronDown,
   ChevronUp,
-  MessageCircleMore
+  MessageCircleMore,
+  CreditCard,
+  MapPin
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import { Product, CartItem, QuizAnswers } from './types';
 import { PRODUCTS } from './constants';
 import { ShinyButton } from './components/ShinyButton';
 import { TestimonialsColumn, Testimonial } from './components/TestimonialsColumn';
+import { PrivacyPage, CookiesPage, TermsPage } from './components/LegalPages';
+import { Typewriter } from './components/Typewriter';
+import { DisplayCard, DisplayCards } from './components/DisplayCards';
+import { SocialIcons } from './components/SocialIcons';
+
+interface BlogPost {
+  title: string;
+  description: string;
+  date: string;
+  author: string;
+  image: string;
+  category: string;
+}
+
+const BLOG_POSTS: BlogPost[] = [
+  {
+    title: "5 Secretos para un Cabello Rizado Perfecto",
+    description: "Descubre cómo mantener tus rizos definidos, hidratados y sin frizz con estos sencillos consejos de nuestra experta.",
+    date: "15 Mar 2026",
+    author: "Elena G.",
+    image: "https://picsum.photos/seed/curly/600/400",
+    category: "Consejos"
+  },
+  {
+    title: "Rutina Capilar: ¿Por qué es importante el orden?",
+    description: "El orden en que aplicas tus productos puede cambiar radicalmente los resultados. Aprende la secuencia ideal.",
+    date: "10 Mar 2026",
+    author: "Amapola",
+    image: "https://picsum.photos/seed/routine/600/400",
+    category: "Educación"
+  },
+  {
+    title: "Ingredientes Naturales vs. Sintéticos",
+    description: "Analizamos los beneficios de la cosmética natural y por qué tu cuero cabelludo te lo agradecerá.",
+    date: "05 Mar 2026",
+    author: "Amapola",
+    image: "https://picsum.photos/seed/natural/600/400",
+    category: "Ciencia"
+  }
+];
 
 const testimonials: Testimonial[] = [
   {
@@ -63,13 +105,13 @@ const testimonials: Testimonial[] = [
 
 // --- Components ---
 
-const Navbar = ({ 
-  activePage, 
-  setActivePage, 
-  cartCount 
-}: { 
-  activePage: string; 
-  setActivePage: (p: string) => void; 
+const Navbar = ({
+  activePage,
+  setActivePage,
+  cartCount
+}: {
+  activePage: string;
+  setActivePage: (p: string) => void;
   cartCount: number;
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -85,19 +127,19 @@ const Navbar = ({
     { id: 'home', label: 'Inicio' },
     { id: 'products', label: 'Productos' },
     { id: 'quiz', label: 'Quiz Capilar' },
+    { id: 'blog', label: 'Blog' },
   ];
 
   return (
     <nav className={cn(
-      "fixed top-0 left-0 right-0 h-20 z-50 transition-all duration-300 px-6 md:px-12 flex items-center justify-between",
-      isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm" : "bg-transparent"
+      "fixed top-0 left-0 right-0 h-20 z-50 transition-all duration-500 px-6 md:px-12 flex items-center justify-between",
+      isScrolled ? "glass-premium" : "bg-transparent"
     )}>
-      <button 
+      <button
         onClick={() => setActivePage('home')}
-        className="text-2xl font-serif font-bold text-brand-primary flex items-center gap-2"
+        className="flex items-center"
       >
-        <span className="text-3xl">🌺</span>
-        <span className="hidden sm:inline">Amapola</span>
+        <img src="/logo.png" alt="Amapola Haircare" className="h-14 md:h-16 w-auto object-contain drop-shadow-sm" referrerPolicy="no-referrer" />
       </button>
 
       {/* Desktop Links */}
@@ -113,7 +155,7 @@ const Navbar = ({
           >
             {link.label}
             {activePage === link.id && (
-              <motion.div 
+              <motion.div
                 layoutId="navUnderline"
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-primary rounded-full"
               />
@@ -123,13 +165,14 @@ const Navbar = ({
       </div>
 
       <div className="flex items-center gap-4">
-        <button 
+        <button
           onClick={() => setActivePage('cart')}
-          className="relative p-2 hover:bg-black/5 rounded-lg transition-colors"
+          className="relative p-2 hover:bg-brand-primary/10 rounded-lg transition-colors group"
+          aria-label="Ver carrito"
         >
-          <ShoppingBag size={22} />
+          <ShoppingBag size={22} className="group-hover:text-brand-primary transition-colors" />
           {cartCount > 0 && (
-            <motion.span 
+            <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               className="absolute top-0 right-0 w-5 h-5 bg-brand-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white"
@@ -139,7 +182,7 @@ const Navbar = ({
           )}
         </button>
 
-        <button 
+        <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="md:hidden p-2 hover:bg-black/5 rounded-lg transition-colors"
         >
@@ -187,12 +230,12 @@ const Navbar = ({
   );
 };
 
-const Footer = () => (
+const Footer = ({ setActivePage }: { setActivePage?: (p: string) => void }) => (
   <footer className="bg-brand-text text-white/70 py-20 px-6 md:px-12">
     <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
       <div className="col-span-1 md:col-span-1">
-        <div className="text-2xl font-serif font-bold text-white flex items-center gap-2 mb-6">
-          <span>🌺</span> Amapola
+        <div className="flex items-center mb-6">
+          <img src="/logo.png" alt="Amapola Haircare" className="h-16 md:h-20 w-auto object-contain filter brightness-0 invert drop-shadow-sm" referrerPolicy="no-referrer" />
         </div>
         <p className="text-sm leading-relaxed mb-8">
           Cuidado capilar personalizado con ingredientes naturales. Tu cabello merece lo mejor.
@@ -213,53 +256,53 @@ const Footer = () => (
       <div>
         <h4 className="text-white font-serif font-semibold mb-6">Tienda</h4>
         <ul className="space-y-4 text-sm">
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">Todos los productos</a></li>
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">Limpieza</a></li>
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">Hidratación</a></li>
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">Tratamientos</a></li>
+          <li><button onClick={() => setActivePage?.('products')} className="hover:text-brand-primary-light transition-colors">Todos los productos</button></li>
+          <li><button onClick={() => setActivePage?.('products')} className="hover:text-brand-primary-light transition-colors">Limpieza</button></li>
+          <li><button onClick={() => setActivePage?.('products')} className="hover:text-brand-primary-light transition-colors">Hidratación</button></li>
+          <li><button onClick={() => setActivePage?.('products')} className="hover:text-brand-primary-light transition-colors">Tratamientos</button></li>
         </ul>
       </div>
 
       <div>
         <h4 className="text-white font-serif font-semibold mb-6">Aprende</h4>
         <ul className="space-y-4 text-sm">
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">Quiz Capilar</a></li>
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">Guías de cuidado</a></li>
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">Blog</a></li>
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">FAQ</a></li>
+          <li><button onClick={() => setActivePage?.('quiz')} className="hover:text-brand-primary-light transition-colors">Quiz Capilar</button></li>
+          <li><button onClick={() => setActivePage?.('blog')} className="hover:text-brand-primary-light transition-colors">Guías de cuidado</button></li>
+          <li><button onClick={() => setActivePage?.('blog')} className="hover:text-brand-primary-light transition-colors">Blog</button></li>
+          <li><button onClick={() => setActivePage?.('home')} className="hover:text-brand-primary-light transition-colors">FAQ</button></li>
         </ul>
       </div>
 
       <div>
         <h4 className="text-white font-serif font-semibold mb-6">Legal</h4>
         <ul className="space-y-4 text-sm">
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">Privacidad</a></li>
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">Cookies</a></li>
-          <li><a href="#" className="hover:text-brand-primary-light transition-colors">Términos</a></li>
+          <li><button onClick={() => setActivePage?.('privacy')} className="hover:text-brand-primary-light transition-colors">Privacidad</button></li>
+          <li><button onClick={() => setActivePage?.('cookies')} className="hover:text-brand-primary-light transition-colors">Cookies</button></li>
+          <li><button onClick={() => setActivePage?.('terms')} className="hover:text-brand-primary-light transition-colors">Términos</button></li>
         </ul>
       </div>
     </div>
     <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
       <span>© 2026 Amapola Haircare. Todos los derechos reservados.</span>
       <div className="flex gap-6">
-        <a href="#" className="hover:text-white transition-colors">Privacidad</a>
-        <a href="#" className="hover:text-white transition-colors">Cookies</a>
-        <a href="#" className="hover:text-white transition-colors">Términos</a>
+        <button onClick={() => setActivePage?.('privacy')} className="hover:text-white transition-colors">Privacidad</button>
+        <button onClick={() => setActivePage?.('cookies')} className="hover:text-white transition-colors">Cookies</button>
+        <button onClick={() => setActivePage?.('terms')} className="hover:text-white transition-colors">Términos</button>
       </div>
     </div>
   </footer>
 );
 
 const ProductCard = ({ product, onAddToCart }: { product: Product; onAddToCart: (p: Product) => void; key?: string | number }) => (
-  <motion.article 
+  <motion.article
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    className="group bg-white rounded-2xl overflow-hidden border border-brand-bg-alt hover:shadow-xl transition-all duration-500"
+    className="group bg-white rounded-2xl overflow-hidden border border-brand-bg-alt hover:shadow-premium hover-magnetic transition-all duration-500"
   >
     <div className="relative aspect-square overflow-hidden bg-brand-bg-alt">
-      <img 
-        src={product.image} 
+      <img
+        src={product.image}
         alt={product.name}
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         referrerPolicy="no-referrer"
@@ -269,7 +312,7 @@ const ProductCard = ({ product, onAddToCart }: { product: Product; onAddToCart: 
           {product.badge}
         </span>
       )}
-      <button 
+      <button
         onClick={() => onAddToCart(product)}
         className="absolute bottom-4 right-4 h-12 px-4 bg-white rounded-xl flex items-center gap-2 shadow-lg opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 hover:bg-brand-primary hover:text-white"
       >
@@ -327,11 +370,11 @@ const FAQ = () => {
 
         <div className="space-y-4">
           {faqs.map((faq, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className="border border-brand-bg-alt rounded-2xl overflow-hidden transition-all duration-300"
             >
-              <button 
+              <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
                 className="w-full p-6 flex items-center justify-between text-left hover:bg-brand-bg/50 transition-colors"
               >
@@ -384,7 +427,7 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
     <section className="relative min-h-screen flex items-center pt-20 bg-gradient-to-br from-brand-bg via-brand-bg-alt to-brand-accent/10">
       <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-primary/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/4" />
       <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-brand-accent/5 blur-3xl rounded-full translate-y-1/4 -translate-x-1/4" />
-      
+
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -394,22 +437,22 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/50 backdrop-blur-sm border border-white rounded-full text-xs font-bold text-brand-primary uppercase tracking-widest mb-8">
             🌿 Cuidado capilar natural
           </div>
-          <h1 className="text-5xl md:text-7xl font-serif mb-8 leading-[1.1]">
-            Tu cabello merece una rutina <em className="italic text-brand-primary">única</em>
+          <h1 className="text-5xl md:text-7xl font-serif mb-8 leading-[1.1] text-brand-text">
+            Tu cabello merece una rutina <em className="italic text-brand-primary animate-shine block md:inline">única</em>
           </h1>
           <p className="text-lg text-brand-text-light mb-12 max-w-lg leading-relaxed">
             Descubre los productos ideales para tu tipo de cabello con nuestro quiz personalizado. Recibe una rutina diseñada solo para ti.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <ShinyButton 
+            <ShinyButton
               onClick={() => onNavigate('quiz')}
-              className="px-10 py-3 flex items-center justify-center"
+              className="px-10 py-3 flex items-center justify-center pulse-cta"
             >
               Descubrir Mi Rutina
             </ShinyButton>
-            <button 
+            <button
               onClick={() => onNavigate('products')}
-              className="bg-white text-brand-primary border-2 border-brand-primary/20 px-10 py-3 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all flex items-center justify-center"
+              className="bg-white text-brand-primary border-2 border-brand-primary/20 px-10 py-3 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all flex items-center justify-center shadow-sm"
             >
               Ver Productos
             </button>
@@ -423,28 +466,28 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
           className="relative flex items-center justify-center h-[500px]"
         >
           {/* Product Image */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -30, rotate: -3 }}
             animate={{ opacity: 1, x: 0, rotate: -3 }}
             transition={{ duration: 1.2, ease: "easeOut", delay: 0.4 }}
-            className="relative z-10 w-2/3 aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl -translate-x-8 -translate-y-8"
+            className="relative z-10 w-2/3 aspect-[4/5] rounded-2xl overflow-hidden shadow-premium -translate-x-8 -translate-y-8 animate-float"
           >
-            <img 
-              src="https://picsum.photos/seed/product-hero/800/1000" 
+            <img
+              src="https://picsum.photos/seed/product-hero/800/1000"
               alt="Amapola Product"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
           </motion.div>
           {/* Founder Image */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 30, rotate: 3 }}
             animate={{ opacity: 1, x: 0, rotate: 3 }}
             transition={{ duration: 1.2, ease: "easeOut", delay: 0.6 }}
-            className="absolute z-20 w-1/2 aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl translate-x-12 translate-y-12 border-4 border-white"
+            className="absolute z-20 w-1/2 aspect-[4/5] rounded-2xl overflow-hidden shadow-premium translate-x-12 translate-y-12 border-4 border-white animate-float [animation-delay:1s]"
           >
-            <img 
-              src="https://picsum.photos/seed/founder-hero/800/1000" 
+            <img
+              src="https://picsum.photos/seed/founder-hero/800/1000"
               alt="Amparo Founder"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
@@ -455,6 +498,26 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
         </motion.div>
       </div>
     </section>
+
+    {/* Typewriter Why Choose Us Section */}
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-32 text-center">
+      <h2 className="text-sm font-bold text-brand-primary uppercase tracking-[0.4em] mb-12">Por qué elegir Amapola</h2>
+      <div className="min-h-[140px] md:min-h-[120px] mb-8">
+        <Typewriter
+          texts={[
+            "Cosmética 100% natural, honesta y respetuosa con tu salud capilar.",
+            "Rutinas adaptadas a tus necesidades reales, sin ingredientes tóxicos.",
+            "Resultados profesionales con la calidez y el cuidado de una marca artesanal."
+          ]}
+          className="text-3xl md:text-5xl font-serif leading-tight text-brand-text"
+          typeSpeed={40}
+          delay={2500}
+          showCursor={true}
+        />
+      </div>
+    </div>
+
+    <div className="section-divider" />
 
     {/* Featured Products (Moved up) */}
     <section className="py-32 px-6 md:px-12 bg-white">
@@ -474,7 +537,7 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
         </div>
 
         <div className="text-center">
-          <button 
+          <button
             onClick={() => onNavigate('products')}
             className="bg-white text-brand-primary border-2 border-brand-primary/20 px-10 py-3 rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all"
           >
@@ -494,8 +557,8 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
           className="relative"
         >
           <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl relative z-10 bg-black group cursor-pointer">
-            <video 
-              src="https://www.w3schools.com/html/mov_bbb.mp4" 
+            <video
+              src="https://www.w3schools.com/html/mov_bbb.mp4"
               className="w-full h-full object-cover opacity-90"
               controls
               poster="https://picsum.photos/seed/founder-vsl/1280/720"
@@ -528,7 +591,7 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
             </p>
           </div>
           <div className="mt-12">
-            <button 
+            <button
               onClick={() => onNavigate('quiz')}
               className="text-brand-primary font-bold uppercase tracking-widest text-sm flex items-center group"
             >
@@ -539,7 +602,6 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
       </div>
     </section>
 
-    {/* Quiz CTA */}
     <section className="py-32 px-6 md:px-12 bg-white relative overflow-hidden">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10">
         <div className="flex-1">
@@ -562,7 +624,7 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
               </div>
             ))}
           </div>
-          <ShinyButton 
+          <ShinyButton
             onClick={() => onNavigate('quiz')}
             className="px-10 py-3 flex items-center"
           >
@@ -570,8 +632,8 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
           </ShinyButton>
         </div>
         <div className="flex-1">
-          <img 
-            src="https://picsum.photos/seed/quiz-cta/800/800" 
+          <img
+            src="https://picsum.photos/seed/quiz-cta/800/800"
             alt="Quiz Capilar"
             className="rounded-[2.5rem] shadow-2xl"
             referrerPolicy="no-referrer"
@@ -600,7 +662,7 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
             </div>
           </div>
           <div className="mt-12">
-            <ShinyButton 
+            <ShinyButton
               onClick={() => onNavigate('quiz')}
               className="px-10 py-3"
             >
@@ -616,15 +678,59 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
       </div>
     </section>
 
+    {/* Latest Blog Posts Section */}
+    <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div className="max-w-xl text-center md:text-left">
+          <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">Nuestro diario</span>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-brand-text">Lo último en el Blog</h2>
+        </div>
+        <button
+          onClick={() => onNavigate('blog')}
+          className="group flex items-center gap-2 text-brand-primary font-bold uppercase tracking-widest text-xs hover:translate-x-2 transition-transform self-center md:self-end"
+        >
+          Ver todos los artículos <ArrowRight size={16} />
+        </button>
+      </div>
+
+      <DisplayCards>
+        {BLOG_POSTS.map((post, i) => (
+          <DisplayCard key={i} {...post} onClick={() => onNavigate('blog')} />
+        ))}
+      </DisplayCards>
+    </section>
+
+    <div className="section-divider" />
+
+    {/* Social Media Section */}
+    <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto text-center">
+      <div className="max-w-2xl mx-auto mb-16">
+        <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">Comunidad</span>
+        <h2 className="text-4xl md:text-5xl font-serif font-bold text-brand-text mb-6">Encontrame también en</h2>
+        <p className="text-brand-text-light">
+          Únete a nuestra comunidad en redes sociales para consejos diarios, novedades y mucho más.
+        </p>
+      </div>
+
+      <SocialIcons
+        icons={[
+          { icon: <Instagram />, href: "https://instagram.com/amapolahaircare", label: "Instagram" },
+          { icon: <MessageCircle />, href: "https://wa.me/34000000000", label: "WhatsApp" },
+          { icon: <Mail />, href: "mailto:hola@amapolahaircare.com", label: "Email" },
+          { icon: <MapPin />, href: "https://maps.google.com", label: "Localización" }
+        ]}
+      />
+    </section>
+
     <FAQ />
   </div>
 );
 
 const ProductsPage = ({ onAddToCart }: { onAddToCart: (p: Product) => void }) => {
   const [filter, setFilter] = useState('all');
-  
-  const filteredProducts = filter === 'all' 
-    ? PRODUCTS 
+
+  const filteredProducts = filter === 'all'
+    ? PRODUCTS
     : PRODUCTS.filter(p => p.category === filter);
 
   const categories = [
@@ -640,7 +746,7 @@ const ProductsPage = ({ onAddToCart }: { onAddToCart: (p: Product) => void }) =>
       <div className="max-w-7xl mx-auto">
         <header className="mb-20">
           <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">Nuestra colección</span>
-          <h1 className="text-5xl font-serif mb-6">Productos</h1>
+          <h1 className="text-5xl font-serif mb-6 text-gradient">Productos</h1>
           <p className="text-brand-text-light max-w-xl">
             Cada producto está formulado para cuidar tu cabello de forma natural y efectiva.
           </p>
@@ -652,10 +758,10 @@ const ProductsPage = ({ onAddToCart }: { onAddToCart: (p: Product) => void }) =>
               key={cat.id}
               onClick={() => setFilter(cat.id)}
               className={cn(
-                "px-6 py-2.5 rounded-lg text-sm font-medium transition-all border",
-                filter === cat.id 
-                  ? "bg-brand-primary border-brand-primary text-white shadow-lg shadow-brand-primary/20" 
-                  : "bg-white border-brand-bg-alt text-brand-text-light hover:border-brand-primary/30"
+                "px-6 py-2.5 rounded-lg text-sm font-medium transition-all border hover-magnetic",
+                filter === cat.id
+                  ? "bg-brand-primary border-brand-primary text-white shadow-lg shadow-brand-primary/20"
+                  : "bg-white border-brand-bg-alt text-brand-text-light hover:border-brand-primary/30 shadow-sm"
               )}
             >
               {cat.label}
@@ -765,8 +871,8 @@ const QuizPage = () => {
         }}>
           <div>
             <label className="block text-sm font-bold mb-2">Tu nombre *</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               required
               className="w-full p-4 bg-brand-bg border-2 border-brand-bg-alt rounded-xl focus:border-brand-primary outline-none transition-all"
               placeholder="María"
@@ -775,8 +881,8 @@ const QuizPage = () => {
           </div>
           <div>
             <label className="block text-sm font-bold mb-2">Tu email *</label>
-            <input 
-              type="email" 
+            <input
+              type="email"
               required
               className="w-full p-4 bg-brand-bg border-2 border-brand-bg-alt rounded-xl focus:border-brand-primary outline-none transition-all"
               placeholder="maria@email.com"
@@ -784,12 +890,26 @@ const QuizPage = () => {
             />
           </div>
           <div className="flex items-start gap-3 pt-4">
-            <input type="checkbox" required className="mt-1 accent-brand-primary" />
+            <input type="checkbox" required className="mt-1 accent-brand-primary size-4" />
             <span className="text-xs text-brand-text-light leading-relaxed">
-              Acepto el tratamiento de mis datos personales según la política de privacidad.
+              Acepto el tratamiento de mis datos personales según la{' '}
+              <button
+                type="button"
+                onClick={() => window.scrollTo(0, 0)} /* In a real app we'd navigate to privacy */
+                className="text-brand-primary font-bold hover:underline"
+              >
+                política de privacidad
+              </button>{' '}
+              y los{' '}
+              <button
+                type="button"
+                className="text-brand-primary font-bold hover:underline"
+              >
+                términos y condiciones
+              </button>.
             </span>
           </div>
-          <ShinyButton 
+          <ShinyButton
             type="submit"
             disabled={isSubmitting}
             className="w-full py-3"
@@ -820,15 +940,19 @@ const QuizPage = () => {
   const progress = (step / (steps.length - 1)) * 100;
 
   return (
-    <div className="min-h-screen pt-32 pb-20 px-6 bg-gradient-to-br from-brand-bg to-brand-bg-alt flex items-center justify-center">
-      <motion.div 
+    <div className="min-h-screen pt-32 pb-20 px-6 bg-gradient-to-br from-brand-bg to-brand-bg-alt flex items-center justify-center relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+        <div className="absolute top-1/4 -left-20 w-80 h-80 bg-brand-primary blur-[120px] rounded-full" />
+        <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-brand-secondary blur-[120px] rounded-full" />
+      </div>
+      <motion.div
         key={step}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="w-full max-w-2xl bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-premium overflow-hidden relative z-10"
       >
         <div className="h-1.5 bg-brand-bg-alt">
-          <motion.div 
+          <motion.div
             className="h-full bg-brand-primary"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
@@ -841,8 +965,8 @@ const QuizPage = () => {
               Pregunta {step} de {steps.length - 3}
             </span>
           )}
-          <h2 className="text-3xl md:text-4xl font-serif mb-4">{current.title}</h2>
-          {current.subtitle && <p className="text-brand-text-light mb-10">{current.subtitle}</p>}
+          <h2 className="text-3xl md:text-4xl font-serif mb-4 text-gradient">{current.title}</h2>
+          {current.subtitle && <p className="text-brand-text-light mb-10 text-sm md:text-base leading-relaxed">{current.subtitle}</p>}
 
           {current.options ? (
             <div className="grid gap-4 mb-12">
@@ -854,10 +978,10 @@ const QuizPage = () => {
                     nextStep();
                   }}
                   className={cn(
-                    "flex items-center gap-6 p-6 rounded-2xl border-2 text-left transition-all",
+                    "flex items-center gap-6 p-6 rounded-2xl border-2 text-left transition-all hover-magnetic",
                     answers[current.field as keyof QuizAnswers] === opt.id
-                      ? "border-brand-primary bg-brand-primary/5"
-                      : "border-brand-bg-alt hover:border-brand-primary/30 bg-brand-bg/50"
+                      ? "border-brand-primary bg-brand-primary/5 shadow-md"
+                      : "border-brand-bg-alt hover:border-brand-primary/30 bg-white/50"
                   )}
                 >
                   <span className="text-3xl">{opt.icon}</span>
@@ -887,13 +1011,39 @@ const QuizPage = () => {
   );
 };
 
-const CartPage = ({ 
-  items, 
-  onUpdateQty, 
-  onRemove, 
-  onNavigate 
-}: { 
-  items: CartItem[]; 
+const BlogPage = ({ onNavigate }: { onNavigate: (p: string) => void }) => {
+  return (
+    <div className="pt-32 pb-20 px-6 md:px-12 min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        <header className="mb-20 text-center">
+          <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">Nuestro diario</span>
+          <h1 className="text-5xl font-serif mb-6 text-gradient">Blog & Educación</h1>
+          <p className="text-brand-text-light max-w-xl mx-auto">
+            Consejos expertas, rutinas y todo lo que necesitas saber para cuidar tu cabello de forma natural.
+          </p>
+        </header>
+
+        <DisplayCards>
+          {BLOG_POSTS.map((post, i) => (
+            <DisplayCard key={i} {...post} onClick={() => { }} />
+          ))}
+          {/* Repeat some for depth */}
+          {BLOG_POSTS.map((post, i) => (
+            <DisplayCard key={i + 3} {...post} title={post.title + " (Legacy)"} onClick={() => { }} />
+          ))}
+        </DisplayCards>
+      </div>
+    </div>
+  );
+};
+
+const CartPage = ({
+  items,
+  onUpdateQty,
+  onRemove,
+  onNavigate
+}: {
+  items: CartItem[];
   onUpdateQty: (id: string, d: number) => void;
   onRemove: (id: string) => void;
   onNavigate: (p: string) => void;
@@ -909,7 +1059,7 @@ const CartPage = ({
           <div className="text-6xl mb-8 opacity-30">🛒</div>
           <h2 className="text-3xl font-serif mb-6">Tu carrito está vacío</h2>
           <p className="text-brand-text-light mb-10">¡Descubre nuestros productos y encuentra tu rutina ideal!</p>
-          <button 
+          <button
             onClick={() => onNavigate('products')}
             className="bg-brand-primary text-white px-10 py-3 rounded-lg font-bold uppercase tracking-widest shadow-lg"
           >
@@ -924,40 +1074,53 @@ const CartPage = ({
     <div className="pt-32 pb-20 px-6 md:px-12 min-h-screen">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-serif mb-12">Tu Carrito</h1>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           <div className="lg:col-span-2 space-y-6">
-            {items.map(item => (
-              <div key={item.id} className="flex gap-6 p-6 bg-white rounded-2xl border border-brand-bg-alt items-center">
-                <div className="w-24 h-24 rounded-xl overflow-hidden bg-brand-bg-alt flex-shrink-0">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-serif font-bold text-lg mb-1">{item.name}</h3>
-                  <p className="text-brand-primary font-bold">{item.price.toFixed(2)} €</p>
-                  <div className="flex items-center gap-4 mt-4">
-                    <div className="flex items-center gap-3 bg-brand-bg rounded-lg p-1 border border-brand-bg-alt">
-                      <button onClick={() => onUpdateQty(item.id, -1)} className="w-8 h-8 rounded-md bg-white flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all shadow-sm">
-                        <Minus size={14} />
-                      </button>
-                      <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
-                      <button onClick={() => onUpdateQty(item.id, 1)} className="w-8 h-8 rounded-md bg-white flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all shadow-sm">
-                        <Plus size={14} />
-                      </button>
+            <AnimatePresence mode="popLayout">
+              {items.map(item => (
+                <motion.div
+                  key={item.id}
+                  layout
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex gap-6 p-6 bg-white rounded-2xl border border-brand-bg-alt items-center hover:shadow-md transition-shadow group"
+                >
+                  <div className="w-24 h-24 rounded-xl overflow-hidden bg-brand-bg-alt flex-shrink-0">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-serif font-bold text-lg mb-1">{item.name}</h3>
+                    <p className="text-brand-primary font-bold">{item.price.toFixed(2)} €</p>
+                    <div className="flex items-center gap-4 mt-4">
+                      <div className="flex items-center gap-3 bg-brand-bg rounded-lg p-1 border border-brand-bg-alt">
+                        <button onClick={() => onUpdateQty(item.id, -1)} className="w-8 h-8 rounded-md bg-white flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all shadow-sm">
+                          <Minus size={14} />
+                        </button>
+                        <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
+                        <button onClick={() => onUpdateQty(item.id, 1)} className="w-8 h-8 rounded-md bg-white flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all shadow-sm">
+                          <Plus size={14} />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <button 
-                  onClick={() => onRemove(item.id)}
-                  className="p-3 text-brand-text-light hover:text-brand-primary transition-colors"
-                >
-                  <Trash2 size={20} />
-                </button>
-              </div>
-            ))}
+                  <button
+                    onClick={() => onRemove(item.id)}
+                    className="p-3 text-brand-text-light hover:text-brand-primary transition-colors"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
-          <div className="bg-white p-10 rounded-[2rem] border border-brand-bg-alt h-fit sticky top-32">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="glass-premium p-10 rounded-[2rem] border border-white/40 h-fit sticky top-32"
+          >
             <h3 className="text-2xl font-serif font-bold mb-8 pb-6 border-bottom border-brand-bg-alt">Resumen</h3>
             <div className="space-y-4 mb-8">
               <div className="flex justify-between text-sm">
@@ -978,13 +1141,14 @@ const CartPage = ({
               <span>Total</span>
               <span>{total.toFixed(2)} €</span>
             </div>
-            <button className="w-full bg-brand-primary text-white py-3 rounded-lg font-bold uppercase tracking-widest shadow-xl hover:bg-brand-primary-dark transition-all">
+            <button className="w-full bg-brand-primary text-white py-4 rounded-lg font-bold uppercase tracking-widest shadow-xl hover:bg-brand-primary-dark hover:-translate-y-0.5 transition-all active:scale-95">
               Finalizar Compra
             </button>
-            <p className="text-center mt-6 text-[10px] text-brand-text-light uppercase tracking-widest">
-              🔒 Pago seguro con Stripe
-            </p>
-          </div>
+            <div className="mt-8 flex items-center justify-center gap-4 opacity-50">
+              <CreditCard size={20} />
+              <span className="text-[10px] uppercase font-bold tracking-widest">Pago seguro con Stripe</span>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>
@@ -1034,10 +1198,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar 
-        activePage={activePage} 
-        setActivePage={setActivePage} 
-        cartCount={cartCount} 
+      <Navbar
+        activePage={activePage}
+        setActivePage={setActivePage}
+        cartCount={cartCount}
       />
 
       <main className="flex-grow">
@@ -1052,11 +1216,15 @@ export default function App() {
             {activePage === 'home' && <Home onNavigate={setActivePage} onAddToCart={addToCart} />}
             {activePage === 'products' && <ProductsPage onAddToCart={addToCart} />}
             {activePage === 'quiz' && <QuizPage />}
+            {activePage === 'blog' && <BlogPage onNavigate={setActivePage} />}
+            {activePage === 'privacy' && <PrivacyPage />}
+            {activePage === 'cookies' && <CookiesPage />}
+            {activePage === 'terms' && <TermsPage />}
             {activePage === 'cart' && (
-              <CartPage 
-                items={cart} 
-                onUpdateQty={updateCartQty} 
-                onRemove={removeFromCart} 
+              <CartPage
+                items={cart}
+                onUpdateQty={updateCartQty}
+                onRemove={removeFromCart}
                 onNavigate={setActivePage}
               />
             )}
@@ -1064,7 +1232,7 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      <Footer />
+      <Footer setActivePage={setActivePage} />
 
       <ChatbotButton />
 
