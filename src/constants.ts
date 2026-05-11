@@ -2,53 +2,60 @@ import { Product } from './types';
 
 export const PRODUCTS: Product[] = [
   {
-    id: 'shampoo-nutritivo',
-    name: 'Champú Nutritivo',
-    price: 18.90,
-    category: 'limpieza',
-    image: 'https://picsum.photos/seed/shampoo/800/800',
-    description: 'Limpieza suave sin sulfatos agresivos. Nutre desde la raíz.',
+    id: 'gotero',
+    name: 'Gotero Capilar',
+    price: 19.50,
+    category: 'tratamiento',
+    image: '/gotero.png',
+    description: 'Tratamiento concentrado en aceite para nutrir, fortalecer y dar brillo al cabello. Uso diario.',
     badge: 'Bestseller'
   },
   {
-    id: 'acondicionador-hidratante',
-    name: 'Acondicionador Hidratante',
+    id: 'acondicionador',
+    name: 'Acondicionador',
     price: 16.50,
     category: 'hidratacion',
     image: 'https://picsum.photos/seed/conditioner/800/800',
-    description: 'Desenreda y sella la hidratación. Sedosidad instantánea.'
+    description: 'Desenreda y sella la hidratación. Sedosidad instantánea sin residuos.'
   },
   {
-    id: 'mascarilla-reparadora',
-    name: 'Mascarilla Reparadora',
+    id: 'tratamiento-profundo',
+    name: 'Tratamiento Profundo',
+    price: 24.90,
+    category: 'tratamiento',
+    image: 'https://picsum.photos/seed/deeptreatment/800/800',
+    description: 'Mascarilla intensiva de uso semanal. Repara, hidrata y restaura el cabello dañado.'
+  },
+  {
+    id: 'shampoo-graso',
+    name: 'Champú Pelo Graso',
+    price: 18.90,
+    category: 'limpieza',
+    image: 'https://picsum.photos/seed/shampoo-graso/800/800',
+    description: 'Limpieza profunda sin sulfatos agresivos. Regula el sebo y deja el cuero cabelludo equilibrado.'
+  },
+  {
+    id: 'shampoo-seco',
+    name: 'Champú Pelo Seco',
+    price: 18.90,
+    category: 'limpieza',
+    image: 'https://picsum.photos/seed/shampoo-seco/800/800',
+    description: 'Limpieza suave y nutritiva. Aporta hidratación desde la primera aplicación.'
+  },
+  {
+    id: 'exfoliante-capilar',
+    name: 'Exfoliante Capilar',
+    price: 21.90,
+    category: 'limpieza',
+    image: 'https://picsum.photos/seed/exfoliante/800/800',
+    description: 'Elimina la acumulación de producto y células muertas del cuero cabelludo. Uso quincenal.'
+  },
+  {
+    id: 'tratamiento-folicular',
+    name: 'Tratamiento Folicular',
     price: 22.90,
-    category: 'tratamiento',
-    image: 'https://picsum.photos/seed/mask/800/800',
-    description: 'Reparación profunda para cabello dañado por químicos o calor.',
-    badge: 'Nuevo'
-  },
-  {
-    id: 'serum-brillo',
-    name: 'Sérum de Brillo',
-    price: 14.90,
     category: 'hidratacion',
-    image: 'https://picsum.photos/seed/serum/800/800',
-    description: 'Acabado brillante sin peso. Sella las puntas abiertas.'
-  },
-  {
-    id: 'aceite-nutritivo',
-    name: 'Aceite Nutritivo',
-    price: 19.50,
-    category: 'tratamiento',
-    image: 'https://picsum.photos/seed/oil/800/800',
-    description: 'Nutrición intensa con aceites naturales. Para todo tipo de cabello.'
-  },
-  {
-    id: 'crema-rizos',
-    name: 'Crema de Rizos',
-    price: 15.90,
-    category: 'styling',
-    image: 'https://picsum.photos/seed/curls/800/800',
-    description: 'Define y controla los rizos sin efecto cartón. Fijación flexible.'
+    image: 'https://picsum.photos/seed/folicular/800/800',
+    description: 'Estimula el folículo capilar y reduce la caída. Formulado con activos naturales.'
   }
 ];

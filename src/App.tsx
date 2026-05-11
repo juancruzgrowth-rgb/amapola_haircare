@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ShoppingBag,
@@ -22,7 +22,9 @@ import {
   ChevronUp,
   MessageCircleMore,
   CreditCard,
-  MapPin
+  MapPin,
+  Info,
+  X as XIcon
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import { Product, CartItem, QuizAnswers } from './types';
@@ -32,7 +34,15 @@ import { TestimonialsColumn, Testimonial } from './components/TestimonialsColumn
 import { PrivacyPage, CookiesPage, TermsPage } from './components/LegalPages';
 import { Typewriter } from './components/Typewriter';
 import { DisplayCard, DisplayCards } from './components/DisplayCards';
+import { BlogDetailPage } from './components/blog/BlogDetailPage';
 import { SocialIcons } from './components/SocialIcons';
+import { ReelsCarousel } from './components/ReelsCarousel';
+
+const TikTokIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.28 8.28 0 0 0 4.85 1.56V6.79a4.85 4.85 0 0 1-1.08-.1z" />
+  </svg>
+);
 
 interface BlogPost {
   title: string;
@@ -241,13 +251,13 @@ const Footer = ({ setActivePage }: { setActivePage?: (p: string) => void }) => (
           Cuidado capilar personalizado con ingredientes naturales. Tu cabello merece lo mejor.
         </p>
         <div className="flex gap-4">
-          <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all">
+          <a href="https://instagram.com/amapolahaircare" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all">
             <Instagram size={18} />
           </a>
-          <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all">
-            <MessageCircle size={18} />
+          <a href="https://tiktok.com/@amapolahaircare" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all">
+            <TikTokIcon />
           </a>
-          <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all">
+          <a href="mailto:hola@amapolahaircare.com" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all">
             <Mail size={18} />
           </a>
         </div>
@@ -339,24 +349,24 @@ const FAQ = () => {
 
   const faqs = [
     {
-      q: "¿Los productos son aptos para el método curly?",
-      a: "¡Sí! Todos nuestros productos están formulados sin sulfatos, siliconas ni alcoholes secantes, por lo que son 100% aptos para el método curly."
+      q: "¿Se puede usar el Gotero Capilar cada día?",
+      a: "Sí, el Gotero Capilar está diseñado para uso diario. Al ser una fórmula concentrada a base de aceites naturales ligeros, no deja residuo ni apelmaza el cabello. Aplica 3–5 gotas sobre el cabello seco o húmedo, distribuyendo desde medios a puntas. Evita el cuero cabelludo si tu cabello tiende a ser graso."
     },
     {
       q: "¿Cuánto tarda en llegar mi pedido?",
-      a: "Los envíos suelen tardar entre 24 y 48 horas laborables en la península. Recibirás un número de seguimiento en cuanto el pedido salga de nuestro taller."
+      a: "Todos nuestros productos se elaboran a mano y a pedido, lo que garantiza que recibirás una fórmula fresca y sin conservantes agresivos. Por eso el tiempo de preparación es de 3 a 5 días hábiles antes del envío. Una vez despachado, el paquete llega en 24–48 horas dentro de Barcelona. ¡Vale la pena la espera!"
     },
     {
-      q: "¿Cómo sé cuál es mi porosidad capilar?",
-      a: "Te recomendamos hacer nuestro Quiz Capilar. En él incluimos preguntas clave que nos ayudan a determinar tu porosidad y recomendarte la rutina ideal."
+      q: "¿Los productos son aptos para el método curly?",
+      a: "Totalmente. Toda la línea Amapola está formulada sin sulfatos, siliconas, alcoholes secantes ni parabenos. Son compatibles con el método curly (Curly Girl Method) desde el champú hasta el tratamiento. Si sigues el método, te recomendamos empezar con una limpieza con el Champú Pelo Seco y continuar con el Acondicionador o el Tratamiento Profundo."
     },
     {
-      q: "¿Los productos contienen sulfatos o parabenos?",
-      a: "No. En Amapola Haircare apostamos por la cosmética natural y limpia. Nuestras fórmulas están libres de sulfatos, parabenos y derivados del petróleo."
+      q: "¿Los productos tienen sulfatos o parabenos?",
+      a: "No contienen ninguno de los dos. En Amapola creemos en la cosmética limpia y transparente: sin sulfatos agresivos, sin parabenos, sin siliconas y sin derivados del petróleo. Cada ingrediente está elegido por su eficacia y su respeto por la salud del cabello y del cuero cabelludo."
     },
     {
-      q: "¿Hacéis envíos a toda España?",
-      a: "Sí, realizamos envíos a toda la península, Baleares y Canarias. Los gastos de envío son gratuitos en pedidos superiores a 30€."
+      q: "¿Realizáis envíos fuera de Barcelona?",
+      a: "Por el momento estamos operando con envíos dentro de Barcelona, para garantizar que cada pedido llegue en perfectas condiciones. Estamos trabajando activamente en nuestra logística para que pronto más Amapolas de toda España (y más allá) puedan recibir sus productos. ¡Síguenos en redes para enterarte cuando lleguemos a tu ciudad!"
     }
   ];
 
@@ -470,27 +480,25 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
             initial={{ opacity: 0, x: -30, rotate: -3 }}
             animate={{ opacity: 1, x: 0, rotate: -3 }}
             transition={{ duration: 1.2, ease: "easeOut", delay: 0.4 }}
-            className="relative z-10 w-2/3 aspect-[4/5] rounded-2xl overflow-hidden shadow-premium -translate-x-8 -translate-y-8 animate-float"
+            className="relative z-10 w-2/3 aspect-[9/16] rounded-2xl overflow-hidden shadow-premium -translate-x-8 -translate-y-8 animate-float"
           >
             <img
-              src="https://picsum.photos/seed/product-hero/800/1000"
-              alt="Amapola Product"
+              src="/hero-1.png"
+              alt="Amapola Gotero Capilar"
               className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
             />
           </motion.div>
-          {/* Founder Image */}
+          {/* Lifestyle Image */}
           <motion.div
             initial={{ opacity: 0, x: 30, rotate: 3 }}
             animate={{ opacity: 1, x: 0, rotate: 3 }}
             transition={{ duration: 1.2, ease: "easeOut", delay: 0.6 }}
-            className="absolute z-20 w-1/2 aspect-[4/5] rounded-2xl overflow-hidden shadow-premium translate-x-12 translate-y-12 border-4 border-white animate-float [animation-delay:1s]"
+            className="absolute z-20 w-1/2 aspect-[9/16] rounded-2xl overflow-hidden shadow-premium translate-x-12 translate-y-12 border-4 border-white animate-float [animation-delay:1s]"
           >
             <img
-              src="https://picsum.photos/seed/founder-hero/800/1000"
-              alt="Amparo Founder"
+              src="/hero-2.png"
+              alt="Amapola Haircare"
               className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
             />
           </motion.div>
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-brand-accent/20 rounded-full blur-2xl opacity-50" />
@@ -531,9 +539,10 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {PRODUCTS.slice(0, 3).map(product => (
-            <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
-          ))}
+          {['gotero', 'acondicionador', 'tratamiento-profundo'].map(id => {
+            const product = PRODUCTS.find(p => p.id === id);
+            return product ? <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} /> : null;
+          })}
         </div>
 
         <div className="text-center">
@@ -581,10 +590,10 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
           viewport={{ once: true }}
         >
           <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">Nuestra Historia</span>
-          <h2 className="text-4xl md:text-5xl font-serif mb-8">Conocimiento propio, resultados reales</h2>
+          <h2 className="text-4xl md:text-5xl font-serif mb-8">Productos naturales, resultados reales</h2>
           <div className="space-y-6 text-brand-text-light leading-relaxed">
             <p>
-              Amapola Haircare nació de la pasión de una sola emprendedora por el cuidado natural. Tras años de estudio y experimentación, Amparo desarrolló sus propios métodos y fórmulas que hoy comparte con miles de mujeres.
+              Amapola Haircare nació de la pasión de una sola emprendedora por el cuidado natural. Kleo desarrolló sus propios métodos y fórmulas que hoy comparte con miles de mujeres.
             </p>
             <p>
               No somos una gran corporación; somos un proyecto personal donde cada producto ha sido probado y perfeccionado por su creadora. Creemos en la transparencia de los ingredientes y en la eficacia de lo natural.
@@ -605,10 +614,9 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
     <section className="py-32 px-6 md:px-12 bg-white relative overflow-hidden">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10">
         <div className="flex-1">
-          <div className="text-5xl mb-8">💆‍♀️</div>
           <h2 className="text-4xl md:text-5xl font-serif mb-6">¿No sabes por dónde empezar?</h2>
           <p className="text-lg text-brand-text-light mb-10 leading-relaxed">
-            Haz nuestro Quiz Capilar en menos de 2 minutos y recibe una rutina personalizada con los productos ideales para tu tipo de cabello.
+            Haz nuestro Quiz Capilar en menos de 1 minuto y recibe una rutina personalizada con los productos ideales para tu tipo de cabello.
           </p>
           <div className="space-y-4 mb-12">
             {[
@@ -633,10 +641,9 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
         </div>
         <div className="flex-1">
           <img
-            src="https://picsum.photos/seed/quiz-cta/800/800"
-            alt="Quiz Capilar"
-            className="rounded-[2.5rem] shadow-2xl"
-            referrerPolicy="no-referrer"
+            src="/quiz-cta.png"
+            alt="Quiz Capilar Amapola"
+            className="rounded-[2.5rem] shadow-2xl w-full object-cover"
           />
         </div>
       </div>
@@ -647,20 +654,10 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
         <div>
           <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">Testimonios</span>
-          <h2 className="text-4xl md:text-5xl font-serif mb-8">Lo que dicen nuestras clientas</h2>
+          <h2 className="text-4xl md:text-5xl font-serif mb-8">Lo que dicen nuestras Amapolas</h2>
           <p className="text-lg text-brand-text-light mb-12 leading-relaxed">
-            Cientos de mujeres ya han transformado su cabello siguiendo nuestras rutinas personalizadas. Estos son algunos de sus resultados reales.
+            Ellas ya han transformado su cabello siguiendo nuestras rutinas personalizadas. Estos son algunos de sus resultados reales.
           </p>
-          <div className="flex gap-8">
-            <div>
-              <div className="text-3xl font-serif font-bold text-brand-primary mb-1">500+</div>
-              <div className="text-xs uppercase font-bold tracking-widest text-brand-text-light">Clientas Felices</div>
-            </div>
-            <div>
-              <div className="text-3xl font-serif font-bold text-brand-primary mb-1">4.9/5</div>
-              <div className="text-xs uppercase font-bold tracking-widest text-brand-text-light">Calificación Media</div>
-            </div>
-          </div>
           <div className="mt-12">
             <ShinyButton
               onClick={() => onNavigate('quiz')}
@@ -702,6 +699,11 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
 
     <div className="section-divider" />
 
+    {/* Reels Instagram Section */}
+    <ReelsCarousel onAddToCart={onAddToCart} />
+
+    <div className="section-divider" />
+
     {/* Social Media Section */}
     <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto text-center">
       <div className="max-w-2xl mx-auto mb-16">
@@ -715,9 +717,8 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
       <SocialIcons
         icons={[
           { icon: <Instagram />, href: "https://instagram.com/amapolahaircare", label: "Instagram" },
-          { icon: <MessageCircle />, href: "https://wa.me/34000000000", label: "WhatsApp" },
-          { icon: <Mail />, href: "mailto:hola@amapolahaircare.com", label: "Email" },
-          { icon: <MapPin />, href: "https://maps.google.com", label: "Localización" }
+          { icon: <TikTokIcon />, href: "https://tiktok.com/@amapolahaircare", label: "TikTok" },
+          { icon: <Mail />, href: "mailto:hola@amapolahaircare.com", label: "Email" }
         ]}
       />
     </section>
@@ -737,8 +738,7 @@ const ProductsPage = ({ onAddToCart }: { onAddToCart: (p: Product) => void }) =>
     { id: 'all', label: 'Todos' },
     { id: 'limpieza', label: 'Limpieza' },
     { id: 'hidratacion', label: 'Hidratación' },
-    { id: 'tratamiento', label: 'Tratamientos' },
-    { id: 'styling', label: 'Styling' },
+    { id: 'tratamiento', label: 'Tratamiento' },
   ];
 
   return (
@@ -779,10 +779,123 @@ const ProductsPage = ({ onAddToCart }: { onAddToCart: (p: Product) => void }) =>
   );
 };
 
+// SVG Hair Icons for quiz options — consistent line art style
+const HairIcon = ({ type }: { type: string }) => {
+  const cls = "text-brand-primary";
+  if (type === 'liso') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <line x1="9" y1="8" x2="9" y2="30" />
+      <line x1="18" y1="6" x2="18" y2="30" />
+      <line x1="27" y1="8" x2="27" y2="30" />
+    </svg>
+  );
+  if (type === 'ondulado') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <path d="M9 8 Q9 14 9 20 Q9 24 12 27 Q15 30 9 30" />
+      <path d="M18 6 Q18 12 18 18 Q18 22 21 25 Q24 28 18 30" />
+      <path d="M27 8 Q27 14 27 20 Q27 24 30 27 Q33 30 27 30" />
+    </svg>
+  );
+  if (type === 'rizado') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <path d="M9 8 Q13 10 13 14 Q13 18 9 20 Q5 22 5 26 Q5 30 9 30" />
+      <path d="M18 6 Q22 8 22 12 Q22 16 18 18 Q14 20 14 24 Q14 28 18 30" />
+      <path d="M27 8 Q31 10 31 14 Q31 18 27 20 Q23 22 23 26 Q23 30 27 30" />
+    </svg>
+  );
+  if (type === 'coily') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <path d="M9 8 Q12 9 12 12 Q12 15 9 16 Q6 17 6 20 Q6 23 9 24 Q12 25 12 28 Q12 31 9 30" />
+      <path d="M18 6 Q21 7 21 10 Q21 13 18 14 Q15 15 15 18 Q15 21 18 22 Q21 23 21 26 Q21 29 18 30" />
+      <path d="M27 8 Q30 9 30 12 Q30 15 27 16 Q24 17 24 20 Q24 23 27 24 Q30 25 30 28 Q30 31 27 30" />
+    </svg>
+  );
+  if (type === 'normal') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <circle cx="18" cy="18" r="11" />
+      <path d="M18 10 Q22 14 22 18 Q22 22 18 26 Q14 22 14 18 Q14 14 18 10Z" fill="currentColor" fillOpacity="0.15" />
+    </svg>
+  );
+  if (type === 'graso') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <circle cx="18" cy="18" r="11" />
+      <path d="M13 13 Q18 10 23 13" /><path d="M13 18 Q18 15 23 18" /><path d="M13 23 Q18 20 23 23" />
+    </svg>
+  );
+  if (type === 'seco') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <circle cx="18" cy="18" r="11" strokeDasharray="3 3" />
+      <line x1="13" y1="13" x2="23" y2="23" /><line x1="23" y1="13" x2="13" y2="23" />
+    </svg>
+  );
+  if (type === 'sensible') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <circle cx="18" cy="18" r="11" />
+      <path d="M18 12 L19.2 16 H23 L20 18.5 L21.2 22.5 L18 20 L14.8 22.5 L16 18.5 L13 16 H16.8Z" fill="currentColor" fillOpacity="0.2" />
+    </svg>
+  );
+  if (type === 'caida') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <path d="M12 8 L12 22" /><path d="M18 6 L18 26" /><path d="M24 8 L24 22" />
+      <path d="M10 22 L12 26 L14 22" /><path d="M16 26 L18 30 L20 26" /><path d="M22 22 L24 26 L26 22" />
+    </svg>
+  );
+  if (type === 'sequedad') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <path d="M18 6 Q22 12 22 18 Q22 24 18 30 Q14 24 14 18 Q14 12 18 6Z" />
+      <line x1="14" y1="16" x2="22" y2="16" strokeDasharray="2 2" />
+    </svg>
+  );
+  if (type === 'frizz') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <path d="M9 8 Q14 11 9 16 Q4 21 9 26 Q14 31 9 30" />
+      <path d="M18 6 Q23 9 18 14 Q13 19 18 24 Q23 29 18 30" />
+      <path d="M27 8 Q32 11 27 16 Q22 21 27 26 Q32 31 27 30" />
+    </svg>
+  );
+  if (type === 'brillo') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <line x1="18" y1="4" x2="18" y2="8" /><line x1="18" y1="28" x2="18" y2="32" />
+      <line x1="4" y1="18" x2="8" y2="18" /><line x1="28" y1="18" x2="32" y2="18" />
+      <circle cx="18" cy="18" r="7" />
+      <line x1="8" y1="8" x2="11" y2="11" /><line x1="25" y1="25" x2="28" y2="28" />
+      <line x1="28" y1="8" x2="25" y2="11" /><line x1="11" y1="25" x2="8" y2="28" />
+    </svg>
+  );
+  // Porosity icons
+  if (type === 'poro-baja') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <rect x="8" y="10" width="20" height="16" rx="3" />
+      <path d="M18 4 L18 10" /><path d="M15 7 L18 4 L21 7" />
+    </svg>
+  );
+  if (type === 'poro-media') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <rect x="8" y="10" width="20" height="16" rx="3" />
+      <path d="M18 4 L18 10" /><path d="M15 7 L18 4 L21 7" />
+      <line x1="14" y1="18" x2="22" y2="18" />
+    </svg>
+  );
+  if (type === 'poro-alta') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <rect x="8" y="10" width="20" height="16" rx="3" strokeDasharray="4 2" />
+      <path d="M18 4 L18 10" /><path d="M15 7 L18 4 L21 7" />
+    </svg>
+  );
+  if (type === 'poro-nose') return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+      <circle cx="18" cy="18" r="12" />
+      <path d="M14 14 Q18 11 22 14 Q24 17 18 19" /><circle cx="18" cy="23" r="1.5" fill="currentColor" />
+    </svg>
+  );
+  return null;
+};
+
 const QuizPage = () => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPorosityInfo, setShowPorosityInfo] = useState(false);
 
   const nextStep = () => setStep(s => s + 1);
   const prevStep = () => setStep(s => s - 1);
@@ -793,16 +906,25 @@ const QuizPage = () => {
 
   const steps = [
     {
-      title: "💆‍♀️ Quiz Capilar",
-      subtitle: "Descubre tu rutina ideal en menos de 2 minutos",
+      title: "Quiz Capilar",
+      subtitle: "Descubre tu rutina ideal en menos de 1 minuto",
       content: (
         <div className="text-center py-8">
+          {/* Dropper icon */}
+          <div className="mx-auto mb-8 w-16 h-16 rounded-2xl bg-brand-bg flex items-center justify-center">
+            <svg width="32" height="32" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-brand-primary">
+              <path d="M14 6 L14 12 Q14 14 16 14 L20 14 Q22 14 22 12 L22 6 Q22 4 18 4 Q14 4 14 6Z" />
+              <path d="M16 14 L16 26 Q16 30 18 30 Q20 30 20 26 L20 14" />
+              <circle cx="18" cy="27" r="2" fill="currentColor" fillOpacity="0.3" />
+              <path d="M14 9 L12 9 Q10 9 10 11 L10 13" strokeDasharray="2 2" />
+            </svg>
+          </div>
           <p className="text-brand-text-light mb-12 text-lg">
             Responde unas preguntas sencillas y te crearemos una <strong>rutina personalizada</strong> con los productos ideales para tu tipo de cabello.
           </p>
           <div className="flex flex-col gap-4 items-center mb-12">
             {[
-              { icon: <Clock size={20} />, text: "Menos de 2 minutos" },
+              { icon: <Clock size={20} />, text: "Menos de 1 minuto" },
               { icon: <Gift size={20} />, text: "100% gratis" },
               { icon: <ClipboardList size={20} />, text: "PDF personalizado" }
             ].map((f, i) => (
@@ -821,40 +943,40 @@ const QuizPage = () => {
       field: 'hair_type',
       title: "¿Cuál es tu tipo de cabello?",
       options: [
-        { id: 'liso', label: 'Liso', icon: '〰️', desc: 'Sin ondas ni curvas naturales' },
-        { id: 'ondulado', label: 'Ondulado', icon: '🌊', desc: 'Ondas suaves en forma de S' },
-        { id: 'rizado', label: 'Rizado', icon: '🔄', desc: 'Rizos definidos en espiral' },
-        { id: 'coily', label: 'Coily / Afro', icon: '🌀', desc: 'Rizos muy apretados' }
+        { id: 'liso', label: 'Liso', svgType: 'liso', desc: 'Sin ondas ni curvas naturales' },
+        { id: 'ondulado', label: 'Ondulado', svgType: 'ondulado', desc: 'Ondas suaves en forma de S' },
+        { id: 'rizado', label: 'Rizado', svgType: 'rizado', desc: 'Rizos definidos en espiral' },
+        { id: 'coily', label: 'Coily / Afro', svgType: 'coily', desc: 'Rizos muy apretados' }
       ]
     },
     {
       field: 'hair_porosity',
       title: "¿Conoces tu porosidad capilar?",
       options: [
-        { id: 'baja', label: 'Baja', icon: '🛡️', desc: 'El agua tarda en absorber' },
-        { id: 'media', label: 'Media', icon: '⚖️', desc: 'Absorbe bien la humedad' },
-        { id: 'alta', label: 'Alta', icon: '🧽', desc: 'Absorbe rápido pero se seca rápido' },
-        { id: 'no_se', label: 'No lo sé', icon: '🤷', desc: '¡Te ayudamos a descubrirlo!' }
+        { id: 'baja', label: 'Baja', svgType: 'poro-baja', desc: 'El agua tarda en absorber' },
+        { id: 'media', label: 'Media', svgType: 'poro-media', desc: 'Absorbe bien la humedad' },
+        { id: 'alta', label: 'Alta', svgType: 'poro-alta', desc: 'Absorbe rápido pero se seca rápido' },
+        { id: 'no_se', label: 'No lo sé', svgType: 'poro-nose', desc: '¡Te ayudamos a descubrirlo!', showInfo: true }
       ]
     },
     {
       field: 'scalp_condition',
       title: "¿Cómo describirías tu cuero cabelludo?",
       options: [
-        { id: 'normal', label: 'Normal', icon: '✅' },
-        { id: 'graso', label: 'Graso', icon: '💧' },
-        { id: 'seco', label: 'Seco', icon: '🏜️' },
-        { id: 'sensible', label: 'Sensible', icon: '🩹' }
+        { id: 'normal', label: 'Normal', svgType: 'normal' },
+        { id: 'graso', label: 'Graso', svgType: 'graso' },
+        { id: 'seco', label: 'Seco', svgType: 'seco' },
+        { id: 'sensible', label: 'Sensible', svgType: 'sensible' }
       ]
     },
     {
       field: 'main_concern',
       title: "¿Cuál es tu mayor preocupación?",
       options: [
-        { id: 'caida', label: 'Caída del cabello', icon: '📉' },
-        { id: 'sequedad', label: 'Sequedad', icon: '🌵' },
-        { id: 'frizz', label: 'Frizz / Encrespamiento', icon: '⚡' },
-        { id: 'brillo', label: 'Falta de brillo', icon: '💫' }
+        { id: 'caida', label: 'Caída del cabello', svgType: 'caida' },
+        { id: 'sequedad', label: 'Sequedad', svgType: 'sequedad' },
+        { id: 'frizz', label: 'Frizz / Encrespamiento', svgType: 'frizz' },
+        { id: 'brillo', label: 'Falta de brillo', svgType: 'brillo' }
       ]
     },
     {
@@ -920,10 +1042,10 @@ const QuizPage = () => {
       )
     },
     {
-      title: "🎉 ¡Listo!",
+      title: "¡Listo!",
       content: (
         <div className="text-center py-12">
-          <div className="text-6xl mb-8">📬</div>
+          <div className="text-6xl mb-8">✉️</div>
           <h3 className="text-2xl font-serif font-bold mb-6">Estamos preparando tu rutina</h3>
           <p className="text-brand-text-light mb-12">
             En unos minutos recibirás en tu email un <strong>PDF personalizado</strong> con tu rutina capilar ideal.
@@ -970,12 +1092,17 @@ const QuizPage = () => {
 
           {current.options ? (
             <div className="grid gap-4 mb-12">
-              {current.options.map(opt => (
+              {current.options.map((opt: { id: string; label: string; svgType?: string; desc?: string; showInfo?: boolean }) => (
                 <button
                   key={opt.id}
                   onClick={() => {
                     updateAnswer(current.field as keyof QuizAnswers, opt.id);
-                    nextStep();
+                    if (opt.showInfo) {
+                      setShowPorosityInfo(true);
+                    } else {
+                      setShowPorosityInfo(false);
+                      nextStep();
+                    }
                   }}
                   className={cn(
                     "flex items-center gap-6 p-6 rounded-2xl border-2 text-left transition-all hover-magnetic",
@@ -984,19 +1111,61 @@ const QuizPage = () => {
                       : "border-brand-bg-alt hover:border-brand-primary/30 bg-white/50"
                   )}
                 >
-                  <span className="text-3xl">{opt.icon}</span>
+                  {opt.svgType && <HairIcon type={opt.svgType} />}
                   <div>
                     <div className="font-bold">{opt.label}</div>
                     {opt.desc && <div className="text-xs text-brand-text-light mt-1">{opt.desc}</div>}
                   </div>
-                  <div className={cn(
-                    "ml-auto w-6 h-6 rounded-full border-2 flex items-center justify-center",
-                    answers[current.field as keyof QuizAnswers] === opt.id ? "border-brand-primary" : "border-brand-bg-alt"
-                  )}>
-                    {answers[current.field as keyof QuizAnswers] === opt.id && <div className="w-3 h-3 bg-brand-primary rounded-full" />}
+                  <div className="flex items-center gap-2 ml-auto">
+                    {opt.showInfo && (
+                      <span className="text-[10px] font-bold text-brand-primary bg-brand-primary/10 px-2 py-1 rounded-full uppercase tracking-wide">Info</span>
+                    )}
+                    <div className={cn(
+                      "w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0",
+                      answers[current.field as keyof QuizAnswers] === opt.id ? "border-brand-primary" : "border-brand-bg-alt"
+                    )}>
+                      {answers[current.field as keyof QuizAnswers] === opt.id && <div className="w-3 h-3 bg-brand-primary rounded-full" />}
+                    </div>
                   </div>
                 </button>
               ))}
+
+              {/* Porosity explanation box */}
+              <AnimatePresence>
+                {showPorosityInfo && current.field === 'hair_porosity' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="rounded-2xl border-2 border-brand-accent/40 bg-brand-accent/5 p-6 overflow-hidden"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <h4 className="font-bold text-brand-text flex items-center gap-2">
+                        <Info size={18} className="text-brand-primary flex-shrink-0" />
+                        ¿Cómo saber tu porosidad?
+                      </h4>
+                      <button onClick={() => setShowPorosityInfo(false)} className="text-brand-text-light hover:text-brand-primary">
+                        <XIcon size={16} />
+                      </button>
+                    </div>
+                    <p className="text-sm text-brand-text-light leading-relaxed mb-3">
+                      <strong className="text-brand-text">Prueba del vaso:</strong> Coloca un mechón limpio y seco en un vaso de agua.
+                    </p>
+                    <ul className="text-sm text-brand-text-light space-y-2 mb-4">
+                      <li className="flex gap-2"><span className="text-brand-primary font-bold">•</span> <span><strong>Se hunde rápido</strong> → Porosidad alta (absorbe todo enseguida)</span></li>
+                      <li className="flex gap-2"><span className="text-brand-primary font-bold">•</span> <span><strong>Flota un rato y baja</strong> → Porosidad media</span></li>
+                      <li className="flex gap-2"><span className="text-brand-primary font-bold">•</span> <span><strong>Sigue flotando</strong> → Porosidad baja (le cuesta absorber)</span></li>
+                    </ul>
+                    <p className="text-xs text-brand-text-light italic">Si no tienes tiempo ahora, no te preocupes: con tus otras respuestas crearemos una rutina igualmente adaptada.</p>
+                    <button
+                      onClick={() => { setShowPorosityInfo(false); nextStep(); }}
+                      className="mt-4 text-sm font-bold text-brand-primary hover:underline flex items-center gap-1"
+                    >
+                      Continuar sin saber mi porosidad <ChevronRight size={16} />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ) : current.content}
 
@@ -1011,7 +1180,73 @@ const QuizPage = () => {
   );
 };
 
-const BlogPage = ({ onNavigate }: { onNavigate: (p: string) => void }) => {
+interface ApiBlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  image_url: string;
+  category: string;
+  published_at: string;
+}
+
+interface BlogPageProps {
+  onNavigate: (p: string) => void;
+  onSelectPost: (id: string) => void;
+  onAddToCart: (p: Product) => void;
+}
+
+const BlogPage = ({ onNavigate: _onNavigate, onSelectPost, onAddToCart: _onAddToCart }: BlogPageProps) => {
+  const [posts, setPosts] = useState<ApiBlogPost[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [postsError, setPostsError] = useState(false);
+  const [newsletterName, setNewsletterName] = useState('');
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+  const [newsletterError, setNewsletterError] = useState('');
+
+  useEffect(() => {
+    fetch('/api/blog/posts?limit=12')
+      .then(res => {
+        if (!res.ok) throw new Error('Error loading posts');
+        return res.json();
+      })
+      .then((data: ApiBlogPost[]) => {
+        setPosts(data);
+        setLoadingPosts(false);
+      })
+      .catch(() => {
+        setPostsError(true);
+        setLoadingPosts(false);
+      });
+  }, []);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNewsletterSubmitting(true);
+    setNewsletterError('');
+    try {
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newsletterEmail, name: newsletterName || undefined }),
+      });
+      if (!res.ok) throw new Error('Error al suscribirse');
+      setNewsletterSuccess(true);
+    } catch {
+      setNewsletterError('Hubo un error. Por favor, inténtalo de nuevo.');
+    } finally {
+      setNewsletterSubmitting(false);
+    }
+  };
+
+  const formatPostDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+
   return (
     <div className="pt-32 pb-20 px-6 md:px-12 min-h-screen">
       <div className="max-w-7xl mx-auto">
@@ -1023,15 +1258,91 @@ const BlogPage = ({ onNavigate }: { onNavigate: (p: string) => void }) => {
           </p>
         </header>
 
-        <DisplayCards>
-          {BLOG_POSTS.map((post, i) => (
-            <DisplayCard key={i} {...post} onClick={() => { }} />
-          ))}
-          {/* Repeat some for depth */}
-          {BLOG_POSTS.map((post, i) => (
-            <DisplayCard key={i + 3} {...post} title={post.title + " (Legacy)"} onClick={() => { }} />
-          ))}
-        </DisplayCards>
+        {loadingPosts && (
+          <DisplayCards>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-[2rem] bg-gray-100 animate-pulse overflow-hidden"
+                style={{ height: '380px' }}
+              />
+            ))}
+          </DisplayCards>
+        )}
+
+        {postsError && (
+          <p className="text-center text-brand-text-light py-20">
+            No se pudieron cargar los artículos. Inténtalo más tarde.
+          </p>
+        )}
+
+        {!loadingPosts && !postsError && posts.length > 0 && (
+          <DisplayCards>
+            {posts.map(post => (
+              <DisplayCard
+                key={post.id}
+                title={post.title}
+                description={post.excerpt}
+                date={formatPostDate(post.published_at)}
+                author="Amapola"
+                image={post.image_url}
+                category={post.category}
+                onClick={() => onSelectPost(post.id)}
+              />
+            ))}
+          </DisplayCards>
+        )}
+
+        {!loadingPosts && !postsError && posts.length === 0 && (
+          <p className="text-center text-brand-text-light py-20">
+            Aún no hay artículos publicados. ¡Vuelve pronto!
+          </p>
+        )}
+
+        {/* Newsletter */}
+        <section className="mt-24 flex flex-col items-center text-center">
+          <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">Newsletter</span>
+          <h2 className="text-3xl font-serif font-bold text-brand-text mb-3">
+            ¿Te gustó este contenido?
+          </h2>
+          <p className="text-brand-text-light mb-10 max-w-md">
+            Suscríbete y recibe nuestras entradas directamente en tu email.
+          </p>
+
+          {newsletterSuccess ? (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-lg w-full rounded-2xl bg-brand-secondary/10 border border-brand-secondary/20 px-8 py-6 text-brand-secondary font-bold"
+            >
+              Ya estás suscrita. ¡Gracias por unirte a la comunidad Amapola!
+            </motion.div>
+          ) : (
+            <form onSubmit={handleNewsletterSubmit} className="max-w-lg w-full flex flex-col gap-4">
+              <input
+                type="text"
+                placeholder="Tu nombre (opcional)"
+                value={newsletterName}
+                onChange={e => setNewsletterName(e.target.value)}
+                className="w-full px-5 py-3 rounded-xl border border-brand-bg-alt bg-white text-brand-text placeholder:text-brand-text-light focus:outline-none focus:border-brand-primary transition-colors"
+              />
+              <input
+                type="email"
+                placeholder="Tu email"
+                required
+                value={newsletterEmail}
+                onChange={e => setNewsletterEmail(e.target.value)}
+                className="w-full px-5 py-3 rounded-xl border border-brand-bg-alt bg-white text-brand-text placeholder:text-brand-text-light focus:outline-none focus:border-brand-primary transition-colors"
+              />
+              {newsletterError && (
+                <p className="text-sm text-red-500">{newsletterError}</p>
+              )}
+              <ShinyButton type="submit" disabled={newsletterSubmitting} className="w-full py-3">
+                {newsletterSubmitting ? 'Suscribiendo...' : 'Suscribirme al blog'}
+              </ShinyButton>
+            </form>
+          )}
+        </section>
       </div>
     </div>
   );
@@ -1159,6 +1470,7 @@ const CartPage = ({
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
+  const [selectedPostId, setSelectedPostId] = useState<string>('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
@@ -1216,7 +1528,20 @@ export default function App() {
             {activePage === 'home' && <Home onNavigate={setActivePage} onAddToCart={addToCart} />}
             {activePage === 'products' && <ProductsPage onAddToCart={addToCart} />}
             {activePage === 'quiz' && <QuizPage />}
-            {activePage === 'blog' && <BlogPage onNavigate={setActivePage} />}
+            {activePage === 'blog' && (
+              <BlogPage
+                onNavigate={setActivePage}
+                onSelectPost={(id) => { setSelectedPostId(id); setActivePage('blog-detail'); }}
+                onAddToCart={addToCart}
+              />
+            )}
+            {activePage === 'blog-detail' && (
+              <BlogDetailPage
+                postId={selectedPostId}
+                onNavigate={setActivePage}
+                onAddToCart={addToCart}
+              />
+            )}
             {activePage === 'privacy' && <PrivacyPage />}
             {activePage === 'cookies' && <CookiesPage />}
             {activePage === 'terms' && <TermsPage />}

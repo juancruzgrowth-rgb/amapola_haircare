@@ -6,3 +6,12 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Supabase local dev
+supabase/.temp/
+supabase/functions/.env
+supabase/.branches/
+
+# Claude Code — archivos personales
+.claude/CLAUDE.local.md
+.claude/settings.local.json
