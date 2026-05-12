@@ -1,7 +1,7 @@
 # Amapola — Próximos Pasos
 
-> Última actualización: 2026-05-12
-> Estado: Fase 3.1 implementada y pusheada a GitHub. Pendiente de activar en producción.
+> Última actualización: 2026-05-12 (sesión 2)
+> Estado: Fase 3.1 + mejoras visuales (logo, blog, categorías) implementadas y pusheadas. Pendiente activar blog en Supabase e iniciar Fase 3.6 Stripe.
 
 ---
 
@@ -71,20 +71,31 @@ Verificar:
 
 ---
 
-### 4. Disparar los 3 blog posts iniciales
+### 4. Insertar los 3 blog posts iniciales en Supabase ⚡ NUEVO
 
-Con el server corriendo (paso 3):
+Los posts están escritos en español con imágenes relevantes (Unsplash, temática capilar).
+El seed está en `supabase/seed.sql`. Hay dos formas de insertarlos:
 
+**Opción A — Supabase dashboard (más rápido, sin Docker):**
+- Ir a https://supabase.com → proyecto → SQL Editor
+- Copiar y ejecutar el contenido completo de `supabase/seed.sql`
+- Los posts aparecen de inmediato en `/blog` con status `published`
+
+**Opción B — Supabase local:**
 ```bash
-for i in 1 2 3; do
-  curl -X POST http://localhost:3001/api/blog/generate \
-    -H "x-cron-secret: $BLOG_CRON_SECRET"
-  sleep 10
-done
+npx supabase start
+psql $(npx supabase db url) < supabase/seed.sql
 ```
 
-Cada post llega como mensaje en Telegram. Kleo aprueba cada uno desde su teléfono.
-Una vez aprobados aparecen en la sección `/blog` y se envía el newsletter a la lista.
+Posts incluidos:
+1. "Cómo Determinar tu Tipo de Porosidad Capilar" — category: Educación
+2. "Rutina Capilar para Cabello Seco: Guía Paso a Paso" — category: Rutinas
+3. "Los Mejores Ingredientes Naturales para el Crecimiento Capilar" — category: Ingredientes
+
+Navegación: home → card del blog → detalle del post ✅ (ya funciona una vez con datos en DB)
+
+> Nota: el generador automático con Gemini + aprobación Telegram sigue activo para posts futuros.
+> El seed es solo para los 3 posts de lanzamiento.
 
 ---
 
@@ -129,7 +140,10 @@ O más fácil: ir a vercel.com → proyecto → Settings → Environment Variabl
 | Email con PDF adjunto vía Resend | ✅ | `server/services/email-quiz.ts` |
 | Route `POST /api/quiz/submit` | ✅ | `server/routes/quiz.ts` |
 | Skill `amapola-newsletter` | ✅ | `.claude/skills/amapola-newsletter/SKILL.md` |
-| 3 blog posts iniciales | ⏳ manual | Ver paso 4 arriba |
+| 3 blog posts iniciales (seed.sql) | ✅ listo, ❌ **no insertado en DB aún** | `supabase/seed.sql` — ver paso 4 |
+| Blog navegable (home → detalle) | ✅ | Cards de home ahora abren el post directamente |
+| Categorías de productos | ✅ | limpieza / hidratación-nutrición / tratamiento / crecimiento |
+| Logo navbar | ✅ | Reemplazado + CSS ajustado (h-10/h-12, mix-blend-multiply) |
 | Cambios visuales homepage | ✅ | Logo navbar, hero image, historia, reels, iconos quiz |
 
 ### Guía de branding (extraída de las imágenes — para referencia rápida)
@@ -169,10 +183,45 @@ Tipografía: **Cormorant Garamond** (display) + **Inter** (texto). ADN: Natural 
 - Investigar: Sendcloud, Packlink, Correos Express, MRW
 - Elegir proveedor → webhook de confirmación de pedido → generar etiqueta automáticamente
 
-### Fase 3.6 — E-commerce Stripe
-- Instalar Stripe SDK, crear PaymentIntents, webhook `payment_intent.succeeded`
-- Tablas `orders` y `order_items` en Supabase
-- Checkout con Stripe Payment Element (soporta Bizum en España)
+### Fase 3.6 — E-commerce Stripe ⚡ PRÓXIMA FASE
+
+**Estado actual:** botón "Finalizar Compra" existe en el carrito pero no está conectado a nada.
+
+**Por qué Stripe:** único gateway con Bizum nativo en España + maneja PSD2/SCA automáticamente.
+Comisión: 2.9% + €0.30 por transacción.
+
+**Pasos para implementar (en orden):**
+
+1. Instalar dependencias:
+   ```bash
+   npm install stripe @stripe/react-stripe-js @stripe/stripe-js
+   ```
+
+2. Crear migración Supabase para `orders` y `order_items`:
+   - `orders`: id, lead_id, status (pending→confirmed→shipped→delivered), total_cents, stripe_payment_intent_id, created_at
+   - `order_items`: id, order_id, product_id, product_name (snapshot), unit_price_cents, quantity
+
+3. Implementar `POST /api/checkout` en Express:
+   - Recibe `{ items: CartItem[] }` del frontend
+   - Valida stock (cuando productos estén en DB)
+   - Crea `PaymentIntent` con Stripe → devuelve `client_secret`
+
+4. Implementar `POST /api/webhooks/stripe`:
+   - Valida firma con `stripe.webhooks.constructEvent()`
+   - En `payment_intent.succeeded` → crea la orden en Supabase + envía email confirmación
+
+5. Reemplazar botón del carrito por `<PaymentElement>` de Stripe:
+   - Soporta tarjeta + Bizum en un solo componente
+   - SCA/PSD2 se maneja automáticamente
+
+**Regla crítica:** NUNCA crear la orden antes de recibir el webhook. El webhook es la única fuente de verdad del pago.
+
+**Variables de entorno necesarias (ya en .env.example):**
+```
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+```
 
 ### Fase 3.7 — Ads
 - Meta Ads: lookalike de leads del quiz + retargeting visitantes

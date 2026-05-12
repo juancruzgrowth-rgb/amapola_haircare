@@ -14,7 +14,7 @@ export const PRODUCTS: Product[] = [
     id: 'acondicionador',
     name: 'Acondicionador',
     price: 16.50,
-    category: 'hidratacion',
+    category: 'hidratacion-nutricion',
     image: 'https://picsum.photos/seed/conditioner/800/800',
     description: 'Desenreda y sella la hidratación. Sedosidad instantánea sin residuos.'
   },
@@ -54,7 +54,7 @@ export const PRODUCTS: Product[] = [
     id: 'tratamiento-folicular',
     name: 'Tratamiento Folicular',
     price: 22.90,
-    category: 'hidratacion',
+    category: 'crecimiento',
     image: 'https://picsum.photos/seed/folicular/800/800',
     description: 'Estimula el folículo capilar y reduce la caída. Formulado con activos naturales.'
   }

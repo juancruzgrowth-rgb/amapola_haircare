@@ -43,6 +43,7 @@ const TikTokIcon = () => (
 );
 
 interface BlogPost {
+  id: string;
   title: string;
   description: string;
   date: string;
@@ -53,28 +54,31 @@ interface BlogPost {
 
 const BLOG_POSTS: BlogPost[] = [
   {
-    title: "5 Secretos para un Cabello Rizado Perfecto",
-    description: "Descubre cómo mantener tus rizos definidos, hidratados y sin frizz con estos sencillos consejos de nuestra experta.",
-    date: "15 Mar 2026",
-    author: "Elena G.",
-    image: "https://picsum.photos/seed/curly/600/400",
-    category: "Consejos"
-  },
-  {
-    title: "Rutina Capilar: ¿Por qué es importante el orden?",
-    description: "El orden en que aplicas tus productos puede cambiar radicalmente los resultados. Aprende la secuencia ideal.",
-    date: "10 Mar 2026",
+    id: 'b1000000-0000-0000-0000-000000000001',
+    title: "Cómo Determinar tu Tipo de Porosidad Capilar",
+    description: "La porosidad define cómo tu cabello absorbe y retiene la humedad. Conocerla es el primer paso para construir una rutina que de verdad funcione.",
+    date: "5 may 2026",
     author: "Amapola",
-    image: "https://picsum.photos/seed/routine/600/400",
+    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&h=500&fit=crop&auto=format",
     category: "Educación"
   },
   {
-    title: "Ingredientes Naturales vs. Sintéticos",
-    description: "Analizamos los beneficios de la cosmética natural y por qué tu cuero cabelludo te lo agradecerá.",
-    date: "05 Mar 2026",
+    id: 'b2000000-0000-0000-0000-000000000002',
+    title: "Rutina Capilar para Cabello Seco: Guía Paso a Paso",
+    description: "El cabello seco necesita hidratación profunda y protección constante. Esta guía completa te explica cómo armar una rutina eficaz sin complicarte.",
+    date: "8 may 2026",
     author: "Amapola",
-    image: "https://picsum.photos/seed/natural/600/400",
-    category: "Ciencia"
+    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=500&fit=crop&auto=format",
+    category: "Rutinas"
+  },
+  {
+    id: 'b3000000-0000-0000-0000-000000000003',
+    title: "Los Mejores Ingredientes Naturales para el Crecimiento Capilar",
+    description: "Antes de gastar en suplementos, descubre qué activos naturales aplicados directamente en el cuero cabelludo sí tienen evidencia científica detrás.",
+    date: "10 may 2026",
+    author: "Amapola",
+    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&h=500&fit=crop&auto=format",
+    category: "Ingredientes"
   }
 ];
 
@@ -147,7 +151,7 @@ const Navbar = ({
         onClick={() => setActivePage('home')}
         className="flex items-center"
       >
-        <img src="/logo-navbar.png" alt="Amapola Haircare" className="h-20 md:h-28 w-auto object-contain drop-shadow-sm" referrerPolicy="no-referrer" />
+        <img src="/logo-navbar.png" alt="Amapola Haircare" className="h-10 md:h-12 w-auto object-contain mix-blend-multiply" />
       </button>
 
       {/* Desktop Links */}
@@ -541,7 +545,7 @@ const NewsletterSection = () => {
 
 // --- Pages ---
 
-const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; onAddToCart: (p: Product) => void }) => (
+const Home = ({ onNavigate, onAddToCart, onSelectPost }: { onNavigate: (p: string) => void; onAddToCart: (p: Product) => void; onSelectPost: (id: string) => void }) => (
   <div className="overflow-hidden">
     {/* Hero */}
     <section className="relative min-h-screen flex items-center pt-20 bg-gradient-to-br from-brand-bg via-brand-bg-alt to-brand-accent/10">
@@ -792,8 +796,8 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
       </div>
 
       <DisplayCards>
-        {BLOG_POSTS.map((post, i) => (
-          <DisplayCard key={i} {...post} onClick={() => onNavigate('blog')} />
+        {BLOG_POSTS.map((post) => (
+          <DisplayCard key={post.id} {...post} onClick={() => onSelectPost(post.id)} />
         ))}
       </DisplayCards>
     </section>
@@ -819,8 +823,9 @@ const ProductsPage = ({ onAddToCart }: { onAddToCart: (p: Product) => void }) =>
   const categories = [
     { id: 'all', label: 'Todos' },
     { id: 'limpieza', label: 'Limpieza' },
-    { id: 'hidratacion', label: 'Hidratación' },
+    { id: 'hidratacion-nutricion', label: 'Hidratación & Nutrición' },
     { id: 'tratamiento', label: 'Tratamiento' },
+    { id: 'crecimiento', label: 'Crecimiento' },
   ];
 
   return (
@@ -1619,7 +1624,7 @@ export default function App() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
-            {activePage === 'home' && <Home onNavigate={setActivePage} onAddToCart={addToCart} />}
+            {activePage === 'home' && <Home onNavigate={setActivePage} onAddToCart={addToCart} onSelectPost={(id) => { setSelectedPostId(id); setActivePage('blog-detail'); }} />}
             {activePage === 'products' && <ProductsPage onAddToCart={addToCart} />}
             {activePage === 'quiz' && <QuizPage />}
             {activePage === 'blog' && (

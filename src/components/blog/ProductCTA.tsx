@@ -18,9 +18,9 @@ export function ProductCTA({ productId, recommendationText, onAddToCart }: Produ
 
   const categoryLabels: Record<Product['category'], string> = {
     limpieza: 'Limpieza',
-    hidratacion: 'Hidratación',
+    'hidratacion-nutricion': 'Hidratación & Nutrición',
     tratamiento: 'Tratamiento',
-    styling: 'Styling',
+    crecimiento: 'Crecimiento',
   };
 
   const handleAdd = () => {

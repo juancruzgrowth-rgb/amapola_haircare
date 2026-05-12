@@ -2,7 +2,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  category: 'limpieza' | 'hidratacion' | 'tratamiento' | 'styling';
+  category: 'limpieza' | 'hidratacion-nutricion' | 'tratamiento' | 'crecimiento';
   image: string;
   description: string;
   badge?: string;
