@@ -225,7 +225,7 @@ export const ReelsCarousel = ({ onAddToCart }: { onAddToCart?: (p: Product) => v
         {/* Header */}
         <div className="text-center mb-20">
           <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">@amapolahaircare</span>
-          <h2 className="text-4xl md:text-5xl font-serif mb-6">Síguenos en Instagram</h2>
+          <h2 className="text-4xl md:text-5xl font-serif mb-6">Sígueme en Instagram</h2>
           <p className="text-brand-text-light max-w-md mx-auto">
             Consejos, rutinas y resultados reales. Únete a la comunidad Amapola.
           </p>
@@ -280,17 +280,7 @@ export const ReelsCarousel = ({ onAddToCart }: { onAddToCart?: (p: Product) => v
 
         {/* CTA */}
         <div className="text-center mt-16">
-          <a
-            href="https://instagram.com/amapolahaircare"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-widest text-white transition-all hover:-translate-y-0.5 hover:shadow-xl"
-            style={{ background: 'linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)' }}
-          >
-            <Instagram size={20} />
-            Ver todos los Reels
-          </a>
-          <div className="flex items-center justify-center gap-6 mt-6">
+          <div className="flex items-center justify-center gap-6">
             <a
               href="https://instagram.com/amapolahaircare"
               target="_blank"
@@ -314,3 +304,4 @@ export const ReelsCarousel = ({ onAddToCart }: { onAddToCart?: (p: Product) => v
     </section>
   );
 };
+

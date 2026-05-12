@@ -17,7 +17,6 @@ import {
   Trash2,
   Plus,
   Minus,
-  Play,
   ChevronDown,
   ChevronUp,
   MessageCircleMore,
@@ -35,7 +34,6 @@ import { PrivacyPage, CookiesPage, TermsPage } from './components/LegalPages';
 import { Typewriter } from './components/Typewriter';
 import { DisplayCard, DisplayCards } from './components/DisplayCards';
 import { BlogDetailPage } from './components/blog/BlogDetailPage';
-import { SocialIcons } from './components/SocialIcons';
 import { ReelsCarousel } from './components/ReelsCarousel';
 
 const TikTokIcon = () => (
@@ -149,7 +147,7 @@ const Navbar = ({
         onClick={() => setActivePage('home')}
         className="flex items-center"
       >
-        <img src="/logo.png" alt="Amapola Haircare" className="h-20 md:h-28 w-auto object-contain drop-shadow-sm" referrerPolicy="no-referrer" />
+        <img src="/logo-navbar.png" alt="Amapola Haircare" className="h-20 md:h-28 w-auto object-contain drop-shadow-sm" referrerPolicy="no-referrer" />
       </button>
 
       {/* Desktop Links */}
@@ -429,6 +427,118 @@ const ChatbotButton = () => (
   </motion.button>
 );
 
+const NewsletterSection = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [consent, setConsent] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!consent || !email) return;
+    setStatus('loading');
+    setErrorMsg('');
+    try {
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name: name || undefined }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `HTTP ${res.status}`);
+      }
+      setStatus('success');
+      setName('');
+      setEmail('');
+      setConsent(false);
+    } catch (err) {
+      setStatus('error');
+      setErrorMsg(err instanceof Error ? err.message : 'Error desconocido');
+    }
+  };
+
+  return (
+    <section className="py-32 px-6 md:px-12 bg-brand-bg-alt relative overflow-hidden">
+      <div className="max-w-3xl mx-auto text-center relative z-10">
+        <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">
+          Newsletter
+        </span>
+        <h2 className="text-4xl md:text-6xl font-serif mb-6 text-brand-text leading-tight">
+          Únete a nuestra <em className="italic text-brand-primary">comunidad</em>
+        </h2>
+        <p className="text-lg text-brand-text-light mb-12 max-w-xl mx-auto leading-relaxed">
+          Recibe consejos capilares, rutinas y novedades cada semana. Sin spam, solo contenido cuidado para ti.
+        </p>
+
+        {status === 'success' ? (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-block px-8 py-6 bg-white rounded-2xl shadow-md border border-brand-bg"
+          >
+            <p className="font-serif text-2xl text-brand-primary mb-2">¡Bienvenida a Amapola!</p>
+            <p className="text-sm text-brand-text-light">
+              Revisa tu correo — pronto empezarás a recibir nuestro contenido.
+            </p>
+          </motion.div>
+        ) : (
+          <form onSubmit={onSubmit} className="max-w-xl mx-auto space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Tu nombre (opcional)"
+                className="w-full px-5 py-4 bg-white border-2 border-brand-bg rounded-xl text-sm focus:border-brand-primary outline-none transition-all"
+                disabled={status === 'loading'}
+              />
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="tu@email.com"
+                className="w-full px-5 py-4 bg-white border-2 border-brand-bg rounded-xl text-sm focus:border-brand-primary outline-none transition-all"
+                disabled={status === 'loading'}
+              />
+            </div>
+
+            <label className="flex items-start gap-3 text-xs text-brand-text-light text-left max-w-md mx-auto cursor-pointer">
+              <input
+                type="checkbox"
+                required
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="mt-1 accent-brand-primary size-4 flex-shrink-0"
+                disabled={status === 'loading'}
+              />
+              <span className="leading-relaxed">
+                Acepto recibir contenido de Amapola y el tratamiento de mis datos según la política de privacidad. Puedo darme de baja en cualquier momento.
+              </span>
+            </label>
+
+            <ShinyButton
+              type="submit"
+              disabled={status === 'loading' || !consent || !email}
+              className="px-12 py-3"
+            >
+              {status === 'loading' ? 'Enviando...' : 'Suscribirme'}
+            </ShinyButton>
+
+            {status === 'error' && (
+              <p className="text-sm text-brand-primary mt-3">
+                Hubo un problema: {errorMsg}. Inténtalo de nuevo en unos minutos.
+              </p>
+            )}
+          </form>
+        )}
+      </div>
+    </section>
+  );
+};
+
 // --- Pages ---
 
 const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; onAddToCart: (p: Product) => void }) => (
@@ -445,7 +555,7 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/50 backdrop-blur-sm border border-white rounded-full text-xs font-bold text-brand-primary uppercase tracking-widest mb-8">
-            🌿 Cuidado capilar natural
+            Cuidado capilar natural
           </div>
           <h1 className="text-5xl md:text-7xl font-serif mb-8 leading-[1.1] text-brand-text">
             Tu cabello merece una rutina <em className="italic text-brand-primary animate-shine block md:inline">única</em>
@@ -473,7 +583,7 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="relative flex items-center justify-center h-[500px]"
+          className="relative flex items-center justify-center h-[420px] mt-8"
         >
           {/* Product Image */}
           <motion.div
@@ -483,7 +593,7 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
             className="relative z-10 w-2/3 aspect-[9/16] rounded-2xl overflow-hidden shadow-premium -translate-x-8 -translate-y-8 animate-float"
           >
             <img
-              src="/hero-1.png"
+              src="/logo-gigant.png"
               alt="Amapola Gotero Capilar"
               className="w-full h-full object-cover"
             />
@@ -565,21 +675,12 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
           viewport={{ once: true }}
           className="relative"
         >
-          <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl relative z-10 bg-black group cursor-pointer">
-            <video
-              src="https://www.w3schools.com/html/mov_bbb.mp4"
-              className="w-full h-full object-cover opacity-90"
-              controls
-              poster="https://picsum.photos/seed/founder-vsl/1280/720"
+          <div className="rounded-2xl overflow-hidden shadow-2xl relative z-10">
+            <img
+              src="/img-kleo-productos.png"
+              alt="Kleo con productos Amapola"
+              className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:scale-110 transition-transform">
-              <div className="w-20 h-20 bg-brand-primary/90 text-white rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm">
-                <Play size={32} fill="currentColor" />
-              </div>
-            </div>
-          </div>
-          <div className="absolute -bottom-6 -right-6 bg-brand-primary text-white py-4 px-8 rounded-xl shadow-xl z-20 hidden md:block">
-            <p className="text-sm font-bold tracking-widest uppercase">Mensaje de Amparo</p>
           </div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] border border-brand-primary/10 rounded-full pointer-events-none" />
         </motion.div>
@@ -620,7 +721,7 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
           </p>
           <div className="space-y-4 mb-12">
             {[
-              { icon: <Clock size={18} />, text: "Menos de 2 minutos" },
+              { icon: <Clock size={18} />, text: "Menos de 1 minuto" },
               { icon: <ClipboardList size={18} />, text: "Rutina personalizada en PDF" },
               { icon: <Gift size={18} />, text: "100% gratuito, sin compromiso" }
             ].map((item, i) => (
@@ -702,26 +803,7 @@ const Home = ({ onNavigate, onAddToCart }: { onNavigate: (p: string) => void; on
     {/* Reels Instagram Section */}
     <ReelsCarousel onAddToCart={onAddToCart} />
 
-    <div className="section-divider" />
-
-    {/* Social Media Section */}
-    <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto text-center">
-      <div className="max-w-2xl mx-auto mb-16">
-        <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">Comunidad</span>
-        <h2 className="text-4xl md:text-5xl font-serif font-bold text-brand-text mb-6">Encontrame también en</h2>
-        <p className="text-brand-text-light">
-          Únete a nuestra comunidad en redes sociales para consejos diarios, novedades y mucho más.
-        </p>
-      </div>
-
-      <SocialIcons
-        icons={[
-          { icon: <Instagram />, href: "https://instagram.com/amapolahaircare", label: "Instagram" },
-          { icon: <TikTokIcon />, href: "https://tiktok.com/@amapolahaircare", label: "TikTok" },
-          { icon: <Mail />, href: "mailto:hola@amapolahaircare.com", label: "Email" }
-        ]}
-      />
-    </section>
+    <NewsletterSection />
 
     <FAQ />
   </div>
@@ -811,27 +893,31 @@ const HairIcon = ({ type }: { type: string }) => {
     </svg>
   );
   if (type === 'normal') return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={cls}>
       <circle cx="18" cy="18" r="11" />
-      <path d="M18 10 Q22 14 22 18 Q22 22 18 26 Q14 22 14 18 Q14 14 18 10Z" fill="currentColor" fillOpacity="0.15" />
+      <path d="M13 18 L16 21 L23 14" />
     </svg>
   );
   if (type === 'graso') return (
     <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
-      <circle cx="18" cy="18" r="11" />
-      <path d="M13 13 Q18 10 23 13" /><path d="M13 18 Q18 15 23 18" /><path d="M13 23 Q18 20 23 23" />
+      <path d="M18 6 Q21 10 21 13 Q21 17 18 17 Q15 17 15 13 Q15 10 18 6Z" />
+      <path d="M11 14 Q13 18 13 20 Q13 23 11 23 Q9 23 9 20 Q9 18 11 14Z" />
+      <path d="M25 14 Q27 18 27 20 Q27 23 25 23 Q23 23 23 20 Q23 18 25 14Z" />
+      <path d="M9 28 Q13 25 18 25 Q23 25 27 28" />
     </svg>
   );
   if (type === 'seco') return (
     <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
-      <circle cx="18" cy="18" r="11" strokeDasharray="3 3" />
-      <line x1="13" y1="13" x2="23" y2="23" /><line x1="23" y1="13" x2="13" y2="23" />
+      <path d="M18 6 Q22 12 22 18 Q22 24 18 30 Q14 24 14 18 Q14 12 18 6Z" />
+      <path d="M14 18 L16 20 L20 16" strokeDasharray="2 2" />
+      <line x1="10" y1="22" x2="14" y2="26" strokeDasharray="2 2" />
+      <line x1="22" y1="22" x2="26" y2="26" strokeDasharray="2 2" />
     </svg>
   );
   if (type === 'sensible') return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
-      <circle cx="18" cy="18" r="11" />
-      <path d="M18 12 L19.2 16 H23 L20 18.5 L21.2 22.5 L18 20 L14.8 22.5 L16 18.5 L13 16 H16.8Z" fill="currentColor" fillOpacity="0.2" />
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={cls}>
+      <path d="M18 28 Q10 22 10 16 Q10 11 14 11 Q16 11 18 13 Q20 11 22 11 Q26 11 26 16 Q26 22 18 28Z" />
+      <line x1="18" y1="16" x2="18" y2="20" /><circle cx="18" cy="23" r="1" fill="currentColor" />
     </svg>
   );
   if (type === 'caida') return (
@@ -862,24 +948,23 @@ const HairIcon = ({ type }: { type: string }) => {
       <line x1="28" y1="8" x2="25" y2="11" /><line x1="11" y1="25" x2="8" y2="28" />
     </svg>
   );
-  // Porosity icons
+  // Porosity icons — arrow direction = absorption level
   if (type === 'poro-baja') return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
-      <rect x="8" y="10" width="20" height="16" rx="3" />
-      <path d="M18 4 L18 10" /><path d="M15 7 L18 4 L21 7" />
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={cls}>
+      <rect x="8" y="8" width="20" height="14" rx="3" />
+      <path d="M18 22 L18 30" /><path d="M15 27 L18 30 L21 27" />
     </svg>
   );
   if (type === 'poro-media') return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
-      <rect x="8" y="10" width="20" height="16" rx="3" />
-      <path d="M18 4 L18 10" /><path d="M15 7 L18 4 L21 7" />
-      <line x1="14" y1="18" x2="22" y2="18" />
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={cls}>
+      <rect x="8" y="10" width="20" height="14" rx="3" />
+      <line x1="13" y1="17" x2="23" y2="17" />
     </svg>
   );
   if (type === 'poro-alta') return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={cls}>
-      <rect x="8" y="10" width="20" height="16" rx="3" strokeDasharray="4 2" />
-      <path d="M18 4 L18 10" /><path d="M15 7 L18 4 L21 7" />
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={cls}>
+      <rect x="8" y="14" width="20" height="14" rx="3" strokeDasharray="4 2" />
+      <path d="M18 14 L18 6" /><path d="M15 9 L18 6 L21 9" />
     </svg>
   );
   if (type === 'poro-nose') return (
@@ -910,15 +995,11 @@ const QuizPage = () => {
       subtitle: "Descubre tu rutina ideal en menos de 1 minuto",
       content: (
         <div className="text-center py-8">
-          {/* Dropper icon */}
-          <div className="mx-auto mb-8 w-16 h-16 rounded-2xl bg-brand-bg flex items-center justify-center">
-            <svg width="32" height="32" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-brand-primary">
-              <path d="M14 6 L14 12 Q14 14 16 14 L20 14 Q22 14 22 12 L22 6 Q22 4 18 4 Q14 4 14 6Z" />
-              <path d="M16 14 L16 26 Q16 30 18 30 Q20 30 20 26 L20 14" />
-              <circle cx="18" cy="27" r="2" fill="currentColor" fillOpacity="0.3" />
-              <path d="M14 9 L12 9 Q10 9 10 11 L10 13" strokeDasharray="2 2" />
-            </svg>
-          </div>
+          <img
+            src="/logo-quiz.png"
+            alt="Amapola"
+            className="mx-auto mb-8 h-44 w-auto object-contain"
+          />
           <p className="text-brand-text-light mb-12 text-lg">
             Responde unas preguntas sencillas y te crearemos una <strong>rutina personalizada</strong> con los productos ideales para tu tipo de cabello.
           </p>
@@ -983,13 +1064,26 @@ const QuizPage = () => {
       title: "¿Dónde enviamos tu rutina?",
       subtitle: "Recibirás un PDF personalizado con tu rutina ideal",
       content: (
-        <form className="space-y-6 py-4" onSubmit={(e) => {
+        <form className="space-y-6 py-4" onSubmit={async (e) => {
           e.preventDefault();
           setIsSubmitting(true);
-          setTimeout(() => {
-            setIsSubmitting(false);
+          try {
+            const res = await fetch('/api/quiz/submit', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(answers),
+            });
+            if (!res.ok) {
+              const data = await res.json().catch(() => ({}));
+              throw new Error(data.error || `HTTP ${res.status}`);
+            }
             nextStep();
-          }, 2000);
+          } catch (err) {
+            console.error('Quiz submit failed:', err);
+            alert('Hubo un problema enviando tu rutina. Por favor inténtalo de nuevo en unos minutos.');
+          } finally {
+            setIsSubmitting(false);
+          }
         }}>
           <div>
             <label className="block text-sm font-bold mb-2">Tu nombre *</label>
