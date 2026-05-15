@@ -226,3 +226,17 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 ### Fase 3.7 — Ads
 - Meta Ads: lookalike de leads del quiz + retargeting visitantes
 - Google Ads: búsqueda por intención ("cuidado cabello rizado natural Spain")
+
+### Notas del desarrollador
+- Necesito mejorar todas las imagenes y quitarle la marca de agua de gemini
+- Cambiar el logotipo del navbar y mejorar el del footer
+- Terminar la implementacion del quiz haciendo las acciones que pide claude.
+- Crear una skill para que genere los PDF con el branding de la marca y siempre de una misma forma
+- Ajustar skill o prompt para que gemini genere siempre imagenes que tengan un patron de acorde al branding. Generar imagenes y que aparezcan productos de amapola.
+- Cambiar lo del chekout del carrito, eliminar pagar por stripe o bizum de momento, y generar un boton que envie el pedido por whatsapp. Aclarar que no se hacen envios fuera de Barcelona de momento.
+-  Terminar el chatbot con informacion de los productos y de la marca y de la fundadora. Crear base de conocimiento.
+- Pedir a kleo todos los testimonios que tiene con sus nombres y si les puede pedir sus fotos de perfil, sino pondremos ficticias pero que no parezcan irreales
+- Insertar todos los productos, con sus descripciones y en la categoria correspondiente
+- Pedir a kleo de crear el meta developer para que se reproduzcan los reels en su web en automatico en esa seccion de red social
+- Probar newsletter, blog y quiz si se generan correctamente
+- Analizar mediante una skill UI/UX de la web y mediante otra skill posibles baches de seguridad.
