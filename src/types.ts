@@ -1,10 +1,16 @@
 export interface Product {
   id: string;
   name: string;
+  subtitle?: string;
   price: number;
   category: 'limpieza' | 'hidratacion-nutricion' | 'tratamiento' | 'crecimiento';
   image: string;
   description: string;
+  fullDescription?: string;
+  benefits?: string[];
+  idealFor?: string;
+  ingredients?: { name: string; benefit: string }[];
+  usage?: string;
   badge?: string;
 }
 

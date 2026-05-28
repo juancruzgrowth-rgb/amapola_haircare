@@ -1,7 +1,7 @@
 # Amapola — Próximos Pasos
 
-> Última actualización: 2026-05-27 (sesión 3)
-> Estado: Fase 3.1 completa. Carrito con pedidos por WhatsApp implementado (formulario checkout, entrega/recogida, pago Bizum/en mano). Logo navbar actualizado a SVG. Pendiente: activar blog en Supabase, insertar productos reales, chatbot.
+> Última actualización: 2026-05-28 (sesión 4)
+> Estado: Productos reales integrados desde PDF (6 productos con info completa). Página de detalle de producto implementada. Logos SVG (quiz, footer, favicon) en producción. Animación de flores en hero con iconos Lucide en color terracota. Pendiente: activar blog en Supabase, imágenes reales de productos, chatbot.
 
 ---
 
@@ -127,11 +127,13 @@ O más fácil: ir a vercel.com → proyecto → Settings → Environment Variabl
 
 ## Contexto para la próxima sesión con Claude
 
-### Lo que está implementado (Fase 3.1 ✅)
+### Lo que está implementado (Fase 3.1 + Sesión 4 ✅)
 
 | Feature | Estado | Archivos clave |
 |---|---|---|
-| Logo grande en quiz (paso inicial) | ✅ | `src/App.tsx` — usa `/public/logo-quiz.png` |
+| Logo grande en quiz (paso inicial) | ✅ | `src/App.tsx` — usa `public/logo-quiz.svg` |
+| Logo footer | ✅ | `src/App.tsx` — usa `public/logo-footer.svg` |
+| Favicon personalizado | ✅ | `index.html` → `/favicon.svg` — `public/favicon.svg` |
 | Sección newsletter en la web | ✅ | `src/App.tsx` — `NewsletterSection` component |
 | Quiz conectado al backend | ✅ | `src/App.tsx` → `POST /api/quiz/submit` |
 | Tabla quiz_responses en Supabase | ✅ migración lista, ❌ **no pusheada aún** | `supabase/migrations/004_create_quiz_responses.sql` |
@@ -143,6 +145,10 @@ O más fácil: ir a vercel.com → proyecto → Settings → Environment Variabl
 | 3 blog posts iniciales (seed.sql) | ✅ listo, ❌ **no insertado en DB aún** | `supabase/seed.sql` — ver paso 4 |
 | Blog navegable (home → detalle) | ✅ | Cards de home ahora abren el post directamente |
 | Categorías de productos | ✅ | limpieza / hidratación-nutrición / tratamiento / crecimiento |
+| Productos reales (6 productos) | ✅ | `src/constants.ts` — extraídos del PDF de fichas de producto |
+| Página de detalle de producto | ✅ | `src/App.tsx` — `ProductDetailPage` component, routing via `activePage` |
+| Tarjetas de producto con descripción | ✅ | `src/App.tsx` — `ProductCard` muestra snippet + "Ver detalle →" |
+| Animación flores hero (Lucide icons) | ✅ | `src/App.tsx` — `Flower`/`Flower2` en color `#b35151` con rotación |
 | Logo navbar | ✅ | Reemplazado por SVG — `public/logo-navbar.svg` |
 | Cambios visuales homepage | ✅ | Logo navbar, hero image, historia, reels, iconos quiz |
 | Carrito: formulario checkout | ✅ | `src/App.tsx` — `CartPage` con nombre, teléfono, email |
@@ -229,3 +235,4 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 - Analizar mediante una skill UI/UX de la web y mediante otra skill posibles baches de seguridad.
 - Armar una guia para el propio sistema de adaptacion de logos, y ver si funciona. Si funciona bien adaptarlo a una skill. Ver tambien en que tamaño se debe crear cada logo original. 
 - ver formulario de compra, quitar algunos campos innecesarios y agregar algunos, como piso y puerta. y ver que el mensaje que se envia sea mejorado y que salga el producto cuando este la info en la base de datos de productos.
+- ver logo no se ve bien en mobile 

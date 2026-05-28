@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ShoppingBag,
   Menu,
   X,
   ChevronRight,
+  ChevronLeft,
   Star,
   Check,
   ArrowRight,
@@ -23,6 +24,8 @@ import {
   CreditCard,
   MapPin,
   Info,
+  Flower,
+  Flower2,
   X as XIcon
 } from 'lucide-react';
 import { cn } from './lib/utils';
@@ -151,7 +154,7 @@ const Navbar = ({
         onClick={() => setActivePage('home')}
         className="flex items-center"
       >
-        <img src="/logo-navbar.svg" alt="Amapola Haircare" className="h-10 md:h-12 w-auto object-contain" />
+        <img src="/logo-navbar.svg" alt="Amapola Haircare" className="h-10 md:h-14 w-auto max-w-[150px] md:max-w-[200px] object-contain" />
       </button>
 
       {/* Desktop Links */}
@@ -247,7 +250,7 @@ const Footer = ({ setActivePage }: { setActivePage?: (p: string) => void }) => (
     <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
       <div className="col-span-1 md:col-span-1">
         <div className="flex items-center mb-6">
-          <img src="/logo.png" alt="Amapola Haircare" className="h-24 md:h-32 w-auto object-contain filter brightness-0 invert drop-shadow-sm" referrerPolicy="no-referrer" />
+          <img src="/logo-footer.svg" alt="Amapola Haircare" className="h-24 md:h-32 w-auto object-contain" referrerPolicy="no-referrer" />
         </div>
         <p className="text-sm leading-relaxed mb-8">
           Cuidado capilar personalizado con ingredientes naturales. Tu cabello merece lo mejor.
@@ -305,7 +308,7 @@ const Footer = ({ setActivePage }: { setActivePage?: (p: string) => void }) => (
   </footer>
 );
 
-const ProductCard = ({ product, onAddToCart }: { product: Product; onAddToCart: (p: Product) => void; key?: string | number }) => (
+const ProductCard = ({ product, onAddToCart, onSelectProduct }: { product: Product; onAddToCart: (p: Product) => void; onSelectProduct?: (id: string) => void; key?: string | number }) => (
   <motion.article
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -336,15 +339,158 @@ const ProductCard = ({ product, onAddToCart }: { product: Product; onAddToCart: 
       <span className="text-[10px] font-bold uppercase tracking-widest text-brand-primary mb-2 block">
         {product.category}
       </span>
-      <h3 className="text-lg font-serif font-semibold mb-2 group-hover:text-brand-primary transition-colors">
+      <h3
+        onClick={() => onSelectProduct?.(product.id)}
+        className="text-lg font-serif font-semibold mb-2 group-hover:text-brand-primary transition-colors cursor-pointer hover:underline"
+      >
         {product.name}
       </h3>
       <p className="text-2xl font-bold text-brand-text">
         {product.price.toFixed(2)} <span className="text-sm font-normal">€</span>
       </p>
+      <p className="text-sm text-brand-text-light mt-3 leading-relaxed line-clamp-2">
+        {product.description}
+      </p>
+      {onSelectProduct && (
+        <button
+          onClick={() => onSelectProduct(product.id)}
+          className="mt-3 text-xs font-bold text-brand-primary uppercase tracking-widest hover:underline"
+        >
+          Ver detalle →
+        </button>
+      )}
     </div>
   </motion.article>
 );
+
+const ProductDetailPage = ({
+  productId,
+  onNavigate,
+  onAddToCart,
+}: {
+  productId: string | null;
+  onNavigate: (page: string) => void;
+  onAddToCart: (p: Product) => void;
+}) => {
+  const product = PRODUCTS.find(p => p.id === productId);
+  if (!product) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p>Producto no encontrado.</p>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-brand-bg pt-24 pb-32 px-6 md:px-12">
+      <div className="max-w-6xl mx-auto">
+        <button
+          onClick={() => onNavigate('products')}
+          className="flex items-center gap-2 text-sm text-brand-text-light hover:text-brand-primary mb-12 transition-colors"
+        >
+          <ChevronLeft size={16} /> Volver a productos
+        </button>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          {/* Image */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative"
+          >
+            <div className="aspect-square rounded-3xl overflow-hidden bg-brand-bg-alt shadow-premium">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            {product.badge && (
+              <span className="absolute top-6 left-6 px-4 py-2 bg-brand-primary text-white text-[11px] font-bold uppercase tracking-wider rounded-full shadow-lg">
+                {product.badge}
+              </span>
+            )}
+          </motion.div>
+
+          {/* Info */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {product.subtitle && (
+              <span className="text-[11px] font-bold text-brand-primary uppercase tracking-[0.3em] mb-3 block">
+                {product.subtitle}
+              </span>
+            )}
+            <h1 className="text-4xl md:text-5xl font-serif font-semibold mb-4 text-brand-text">
+              {product.name}
+            </h1>
+            <p className="text-3xl font-bold text-brand-text mb-6">
+              {product.price.toFixed(2)} <span className="text-base font-normal">€</span>
+            </p>
+            <p className="text-brand-text-light leading-relaxed mb-8 text-lg">
+              {product.fullDescription || product.description}
+            </p>
+
+            <button
+              onClick={() => onAddToCart(product)}
+              className="w-full py-4 bg-brand-primary text-white rounded-xl font-bold text-sm uppercase tracking-widest hover:bg-brand-primary/90 transition-all mb-12 flex items-center justify-center gap-3"
+            >
+              <Plus size={18} /> Agregar al carrito
+            </button>
+
+            {/* Benefits */}
+            {product.benefits && product.benefits.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-brand-text mb-4">Beneficios</h3>
+                <ul className="space-y-3">
+                  {product.benefits.map((b, i) => (
+                    <li key={i} className="flex items-start gap-3 text-brand-text-light">
+                      <span className="w-2 h-2 rounded-full bg-brand-primary mt-2 shrink-0" />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Ideal for */}
+            {product.idealFor && (
+              <div className="mb-10 p-6 bg-brand-bg-alt rounded-2xl">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-brand-text mb-2">Ideal para</h3>
+                <p className="text-brand-text-light">{product.idealFor}</p>
+              </div>
+            )}
+
+            {/* Ingredients */}
+            {product.ingredients && product.ingredients.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-brand-text mb-4">Ingredientes protagonistas</h3>
+                <div className="space-y-3">
+                  {product.ingredients.map((ing, i) => (
+                    <div key={i} className="border-l-2 border-brand-primary/30 pl-4">
+                      <span className="font-semibold text-brand-text text-sm">{ing.name}</span>
+                      <p className="text-brand-text-light text-sm">{ing.benefit}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Usage */}
+            {product.usage && (
+              <div className="p-6 bg-brand-primary/5 border border-brand-primary/20 rounded-2xl">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-brand-text mb-2">Ritual de uso sugerido</h3>
+                <p className="text-brand-text-light text-sm leading-relaxed">{product.usage}</p>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const FAQ = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -545,13 +691,25 @@ const NewsletterSection = () => {
 
 // --- Pages ---
 
-const Home = ({ onNavigate, onAddToCart, onSelectPost }: { onNavigate: (p: string) => void; onAddToCart: (p: Product) => void; onSelectPost: (id: string) => void }) => (
+const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNavigate: (p: string) => void; onAddToCart: (p: Product) => void; onSelectPost: (id: string) => void; onSelectProduct: (id: string) => void }) => {
+  const [flowers, setFlowers] = useState<{id: number; x: number; y: number}[]>([]);
+  const flowerIdRef = useRef(0);
+  const lastFlowerTime = useRef(0);
+
+  const handleHeroMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const now = Date.now();
+    if (now - lastFlowerTime.current < 100) return;
+    lastFlowerTime.current = now;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const id = flowerIdRef.current++;
+    setFlowers(prev => [...prev, { id, x: e.clientX - rect.left, y: e.clientY - rect.top }]);
+    setTimeout(() => setFlowers(prev => prev.filter(f => f.id !== id)), 900);
+  };
+
+  return (
   <div className="overflow-hidden">
     {/* Hero */}
-    <section className="relative min-h-screen flex items-center pt-20 bg-gradient-to-br from-brand-bg via-brand-bg-alt to-brand-accent/10">
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-primary/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/4" />
-      <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-brand-accent/5 blur-3xl rounded-full translate-y-1/4 -translate-x-1/4" />
-
+    <section className="relative min-h-screen flex items-center pt-20 bg-gradient-to-br from-brand-bg via-brand-bg-alt to-brand-accent/10 overflow-hidden" onMouseMove={handleHeroMouseMove}>
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -562,7 +720,7 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost }: { onNavigate: (p: strin
             Cuidado capilar natural
           </div>
           <h1 className="text-5xl md:text-7xl font-serif mb-8 leading-[1.1] text-brand-text">
-            Tu cabello merece una rutina <em className="italic text-brand-primary animate-shine block md:inline">única</em>
+            Tu cabello merece una rutina <em className="italic text-brand-primary block md:inline">única</em>
           </h1>
           <p className="text-lg text-brand-text-light mb-12 max-w-lg leading-relaxed">
             Descubre los productos ideales para tu tipo de cabello con nuestro quiz personalizado. Recibe una rutina diseñada solo para ti.
@@ -587,7 +745,7 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost }: { onNavigate: (p: strin
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="relative flex items-center justify-center h-[420px] mt-8"
+          className="relative flex items-center justify-center h-[300px] mt-16 lg:mt-8"
         >
           {/* Product Image */}
           <motion.div
@@ -619,6 +777,26 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost }: { onNavigate: (p: strin
           <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-brand-primary/10 rounded-full blur-3xl opacity-50" />
         </motion.div>
       </div>
+      {flowers.map(f => (
+        <motion.span
+          key={f.id}
+          initial={{ scale: 0, opacity: 1, y: 0, rotate: 0 }}
+          animate={{ scale: 1.4, opacity: 0, y: -40, rotate: f.id % 2 === 0 ? 45 : -30 }}
+          transition={{ duration: 0.9, ease: 'easeOut' }}
+          style={{
+            left: f.x,
+            top: f.y,
+            position: 'absolute',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+            userSelect: 'none',
+            zIndex: 20,
+            color: '#b35151',
+          }}
+        >
+          {f.id % 2 === 0 ? <Flower size={28} /> : <Flower2 size={28} />}
+        </motion.span>
+      ))}
     </section>
 
     {/* Typewriter Why Choose Us Section */}
@@ -655,7 +833,7 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost }: { onNavigate: (p: strin
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {['gotero', 'acondicionador', 'tratamiento-profundo'].map(id => {
             const product = PRODUCTS.find(p => p.id === id);
-            return product ? <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} /> : null;
+            return product ? <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} onSelectProduct={onSelectProduct} /> : null;
           })}
         </div>
 
@@ -811,9 +989,10 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost }: { onNavigate: (p: strin
 
     <FAQ />
   </div>
-);
+  );
+};
 
-const ProductsPage = ({ onAddToCart }: { onAddToCart: (p: Product) => void }) => {
+const ProductsPage = ({ onAddToCart, onSelectProduct }: { onAddToCart: (p: Product) => void; onSelectProduct?: (id: string) => void }) => {
   const [filter, setFilter] = useState('all');
 
   const filteredProducts = filter === 'all'
@@ -858,7 +1037,7 @@ const ProductsPage = ({ onAddToCart }: { onAddToCart: (p: Product) => void }) =>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map(product => (
-            <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
+            <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} onSelectProduct={onSelectProduct} />
           ))}
         </div>
       </div>
@@ -1001,7 +1180,7 @@ const QuizPage = () => {
       content: (
         <div className="text-center py-8">
           <img
-            src="/logo-quiz.png"
+            src="/logo-quiz.svg"
             alt="Amapola"
             className="mx-auto mb-8 h-44 w-auto object-contain"
           />
@@ -1471,9 +1650,8 @@ const CartPage = ({
 }) => {
   const [deliveryType, setDeliveryType] = useState<'delivery' | 'pickup'>('delivery');
   const [paymentMethod, setPaymentMethod] = useState<'bizum' | 'cash'>('bizum');
-  const [form, setForm] = useState({ name: '', phone: '', email: '', address: '', city: '' });
+  const [form, setForm] = useState({ name: '', phone: '', address: '', floor: '', postal: '' });
   const [formError, setFormError] = useState('');
-  const [cityWarning, setCityWarning] = useState(false);
 
   const subtotal = items.reduce((s, i) => s + (i.price * i.quantity), 0);
   const shipping = deliveryType === 'delivery' ? DELIVERY_FEE : 0;
@@ -1484,31 +1662,26 @@ const CartPage = ({
     if (type === 'delivery') setPaymentMethod('bizum');
   };
 
-  const handleCityChange = (val: string) => {
-    setForm(f => ({ ...f, city: val }));
-    setCityWarning(val.trim().length > 2 && val.trim().toLowerCase() !== 'barcelona');
-  };
-
   const buildWhatsAppMessage = () => {
-    const lines = items.map(i => `• ${i.name} x${i.quantity} — ${(i.price * i.quantity).toFixed(2)}€`).join('\n');
+    const lines = items.map(i => `🧴 ${i.name} x${i.quantity} — ${(i.price * i.quantity).toFixed(2)}€`).join('\n');
+    const addressDetail = [form.address, form.floor, form.postal ? `CP ${form.postal}` : '', 'Barcelona'].filter(Boolean).join(', ');
     const deliveryLine = deliveryType === 'delivery'
-      ? `🚚 *Envío a domicilio* (+${DELIVERY_FEE.toFixed(2)}€)\n📍 ${form.address}${form.city ? `, ${form.city}` : ''}`
-      : `🏪 *Recogida en domicilio de la fundadora* (gratis)`;
+      ? `🚚 Envío a domicilio (+${DELIVERY_FEE.toFixed(2)}€)\n📍 ${addressDetail}`
+      : `🏪 Recogida en domicilio de la fundadora (gratis)`;
     const paymentLine = paymentMethod === 'bizum'
-      ? `💳 *Pago:* Bizum al ${BIZUM_DISPLAY}\n📎 Adjunto el comprobante del pago a continuación.`
-      : `💳 *Pago:* En mano al recoger`;
+      ? `💳 Pago: Bizum al ${BIZUM_DISPLAY}\n📎 Adjunto el comprobante del pago a continuación.`
+      : `💳 Pago: En mano al recoger`;
     return encodeURIComponent(
-      `¡Hola! 👋 Quiero hacer este pedido:\n\n` +
-      `👤 *Mis datos:*\n` +
+      `Hola! 👋 Quiero hacer este pedido:\n\n` +
+      `👤 Mis datos:\n` +
       `Nombre: ${form.name}\n` +
-      `Teléfono: ${form.phone}` +
-      (form.email ? `\nEmail: ${form.email}` : '') +
-      `\n\n🛒 *Productos:*\n${lines}\n\n` +
+      `Teléfono: ${form.phone}\n\n` +
+      `🛒 Mis productos:\n${lines}\n\n` +
       `${deliveryLine}\n\n` +
       `${paymentLine}\n\n` +
       `📦 Envío: ${shipping === 0 ? 'Gratis (recogida)' : `${shipping.toFixed(2)}€`}\n` +
-      `💰 *Total: ${total.toFixed(2)}€*\n\n` +
-      `¿Podéis confirmarlo? 🌿`
+      `💰 Total: ${total.toFixed(2)}€\n\n` +
+      `Podéis confirmarlo? 🌿`
     );
   };
 
@@ -1517,8 +1690,8 @@ const CartPage = ({
       setFormError('Por favor completa tu nombre y teléfono para continuar.');
       return;
     }
-    if (deliveryType === 'delivery' && !form.address.trim()) {
-      setFormError('Por favor introduce tu dirección de envío.');
+    if (deliveryType === 'delivery' && (!form.address.trim() || !form.postal.trim())) {
+      setFormError('Por favor introduce la dirección y el código postal.');
       return;
     }
     setFormError('');
@@ -1616,13 +1789,6 @@ const CartPage = ({
                   onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                   className={inputClass}
                 />
-                <input
-                  type="email"
-                  placeholder="Email (opcional)"
-                  value={form.email}
-                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                  className={inputClass}
-                />
               </div>
             </div>
 
@@ -1679,21 +1845,18 @@ const CartPage = ({
                       />
                       <input
                         type="text"
-                        placeholder="Ciudad"
-                        value={form.city}
-                        onChange={e => handleCityChange(e.target.value)}
+                        placeholder="Piso y puerta (ej: 3º 2ª)"
+                        value={form.floor}
+                        onChange={e => setForm(f => ({ ...f, floor: e.target.value }))}
                         className={inputClass}
                       />
-                      {cityWarning && (
-                        <motion.p
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 flex items-start gap-1.5"
-                        >
-                          <Info size={13} className="mt-0.5 flex-shrink-0" />
-                          De momento solo hacemos envíos dentro de Barcelona. Para otras ciudades, escríbenos por WhatsApp.
-                        </motion.p>
-                      )}
+                      <input
+                        type="text"
+                        placeholder="Código postal *"
+                        value={form.postal}
+                        onChange={e => setForm(f => ({ ...f, postal: e.target.value }))}
+                        className={inputClass}
+                      />
                     </div>
                   </motion.div>
                 )}
@@ -1822,6 +1985,7 @@ const CartPage = ({
 export default function App() {
   const [activePage, setActivePage] = useState('home');
   const [selectedPostId, setSelectedPostId] = useState<string>('');
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
@@ -1876,8 +2040,15 @@ export default function App() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
-            {activePage === 'home' && <Home onNavigate={setActivePage} onAddToCart={addToCart} onSelectPost={(id) => { setSelectedPostId(id); setActivePage('blog-detail'); }} />}
-            {activePage === 'products' && <ProductsPage onAddToCart={addToCart} />}
+            {activePage === 'home' && <Home onNavigate={setActivePage} onAddToCart={addToCart} onSelectPost={(id) => { setSelectedPostId(id); setActivePage('blog-detail'); }} onSelectProduct={(id) => { setSelectedProductId(id); setActivePage('product-detail'); }} />}
+            {activePage === 'products' && <ProductsPage onAddToCart={addToCart} onSelectProduct={(id) => { setSelectedProductId(id); setActivePage('product-detail'); }} />}
+            {activePage === 'product-detail' && (
+              <ProductDetailPage
+                productId={selectedProductId}
+                onNavigate={setActivePage}
+                onAddToCart={addToCart}
+              />
+            )}
             {activePage === 'quiz' && <QuizPage />}
             {activePage === 'blog' && (
               <BlogPage
