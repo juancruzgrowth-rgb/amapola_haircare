@@ -1,7 +1,7 @@
 # Amapola — Próximos Pasos
 
-> Última actualización: 2026-05-12 (sesión 2)
-> Estado: Fase 3.1 + mejoras visuales (logo, blog, categorías) implementadas y pusheadas. Pendiente activar blog en Supabase e iniciar Fase 3.6 Stripe.
+> Última actualización: 2026-05-27 (sesión 3)
+> Estado: Fase 3.1 completa. Carrito con pedidos por WhatsApp implementado (formulario checkout, entrega/recogida, pago Bizum/en mano). Logo navbar actualizado a SVG. Pendiente: activar blog en Supabase, insertar productos reales, chatbot.
 
 ---
 
@@ -143,8 +143,12 @@ O más fácil: ir a vercel.com → proyecto → Settings → Environment Variabl
 | 3 blog posts iniciales (seed.sql) | ✅ listo, ❌ **no insertado en DB aún** | `supabase/seed.sql` — ver paso 4 |
 | Blog navegable (home → detalle) | ✅ | Cards de home ahora abren el post directamente |
 | Categorías de productos | ✅ | limpieza / hidratación-nutrición / tratamiento / crecimiento |
-| Logo navbar | ✅ | Reemplazado + CSS ajustado (h-10/h-12, mix-blend-multiply) |
+| Logo navbar | ✅ | Reemplazado por SVG — `public/logo-navbar.svg` |
 | Cambios visuales homepage | ✅ | Logo navbar, hero image, historia, reels, iconos quiz |
+| Carrito: formulario checkout | ✅ | `src/App.tsx` — `CartPage` con nombre, teléfono, email |
+| Carrito: opciones de entrega | ✅ | Envío a domicilio (solo BCN, +5€) · Recogida en domicilio (gratis) |
+| Carrito: opciones de pago | ✅ | Bizum obligatorio en envío · Bizum o en mano en recogida |
+| Carrito: pedido detallado por WhatsApp | ✅ | Mensaje incluye productos, datos, entrega, pago y total |
 
 ### Guía de branding (extraída de las imágenes — para referencia rápida)
 
@@ -183,40 +187,23 @@ Tipografía: **Cormorant Garamond** (display) + **Inter** (texto). ADN: Natural 
 - Investigar: Sendcloud, Packlink, Correos Express, MRW
 - Elegir proveedor → webhook de confirmación de pedido → generar etiqueta automáticamente
 
-### Fase 3.6 — E-commerce Stripe ⚡ PRÓXIMA FASE
+### Fase 3.6 — E-commerce Stripe (pospuesta)
 
-**Estado actual:** botón "Finalizar Compra" existe en el carrito pero no está conectado a nada.
+**Estado actual (sesión 3):** el carrito gestiona pedidos vía WhatsApp con Bizum manual o pago en mano. Funciona para el volumen actual sin pasarela online.
 
-**Por qué Stripe:** único gateway con Bizum nativo en España + maneja PSD2/SCA automáticamente.
-Comisión: 2.9% + €0.30 por transacción.
+**Cuándo retomar:** cuando el volumen de pedidos justifique automatizar cobros, o cuando Kleo quiera eliminar la fricción del Bizum manual.
 
-**Pasos para implementar (en orden):**
+**Pasos cuando se retome:**
 
-1. Instalar dependencias:
-   ```bash
-   npm install stripe @stripe/react-stripe-js @stripe/stripe-js
-   ```
+1. `npm install stripe @stripe/react-stripe-js @stripe/stripe-js`
+2. Migración Supabase para `orders` y `order_items` (schema en reglas de dominio).
+3. `POST /api/checkout` → crea `PaymentIntent` → devuelve `client_secret`.
+4. `POST /api/webhooks/stripe` → en `payment_intent.succeeded` → crea orden + email confirmación.
+5. Reemplazar flujo WhatsApp por `<PaymentElement>` (tarjeta + Bizum nativo, SCA automático).
 
-2. Crear migración Supabase para `orders` y `order_items`:
-   - `orders`: id, lead_id, status (pending→confirmed→shipped→delivered), total_cents, stripe_payment_intent_id, created_at
-   - `order_items`: id, order_id, product_id, product_name (snapshot), unit_price_cents, quantity
+**Regla crítica:** NUNCA crear la orden antes de recibir el webhook.
 
-3. Implementar `POST /api/checkout` en Express:
-   - Recibe `{ items: CartItem[] }` del frontend
-   - Valida stock (cuando productos estén en DB)
-   - Crea `PaymentIntent` con Stripe → devuelve `client_secret`
-
-4. Implementar `POST /api/webhooks/stripe`:
-   - Valida firma con `stripe.webhooks.constructEvent()`
-   - En `payment_intent.succeeded` → crea la orden en Supabase + envía email confirmación
-
-5. Reemplazar botón del carrito por `<PaymentElement>` de Stripe:
-   - Soporta tarjeta + Bizum en un solo componente
-   - SCA/PSD2 se maneja automáticamente
-
-**Regla crítica:** NUNCA crear la orden antes de recibir el webhook. El webhook es la única fuente de verdad del pago.
-
-**Variables de entorno necesarias (ya en .env.example):**
+**Variables necesarias (ya en `.env.example`):**
 ```
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
 STRIPE_SECRET_KEY=sk_test_...
@@ -240,3 +227,5 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 - Pedir a kleo de crear el meta developer para que se reproduzcan los reels en su web en automatico en esa seccion de red social
 - Probar newsletter, blog y quiz si se generan correctamente
 - Analizar mediante una skill UI/UX de la web y mediante otra skill posibles baches de seguridad.
+- Armar una guia para el propio sistema de adaptacion de logos, y ver si funciona. Si funciona bien adaptarlo a una skill. Ver tambien en que tamaño se debe crear cada logo original. 
+- ver formulario de compra, quitar algunos campos innecesarios y agregar algunos, como piso y puerta. y ver que el mensaje que se envia sea mejorado y que salga el producto cuando este la info en la base de datos de productos.

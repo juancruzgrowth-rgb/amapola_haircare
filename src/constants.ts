@@ -2,7 +2,7 @@ import { Product } from './types';
 
 // Número de WhatsApp de la fundadora (formato internacional sin + ni espacios)
 // Ejemplo: "34612345678" para España
-export const WHATSAPP_ORDER_NUMBER = '34XXXXXXXXX';
+export const WHATSAPP_ORDER_NUMBER = '34625443926';
 
 export const PRODUCTS: Product[] = [
   {

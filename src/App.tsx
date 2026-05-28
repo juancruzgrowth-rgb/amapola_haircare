@@ -151,7 +151,7 @@ const Navbar = ({
         onClick={() => setActivePage('home')}
         className="flex items-center"
       >
-        <img src="/logo-navbar.png" alt="Amapola Haircare" className="h-10 md:h-12 w-auto object-contain mix-blend-multiply" />
+        <img src="/logo-navbar.svg" alt="Amapola Haircare" className="h-10 md:h-12 w-auto object-contain" />
       </button>
 
       {/* Desktop Links */}
@@ -1454,6 +1454,10 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
+const DELIVERY_FEE = 5.00;
+
+const BIZUM_DISPLAY = '+34 625 443 926';
+
 const CartPage = ({
   items,
   onUpdateQty,
@@ -1465,19 +1469,59 @@ const CartPage = ({
   onRemove: (id: string) => void;
   onNavigate: (p: string) => void;
 }) => {
+  const [deliveryType, setDeliveryType] = useState<'delivery' | 'pickup'>('delivery');
+  const [paymentMethod, setPaymentMethod] = useState<'bizum' | 'cash'>('bizum');
+  const [form, setForm] = useState({ name: '', phone: '', email: '', address: '', city: '' });
+  const [formError, setFormError] = useState('');
+  const [cityWarning, setCityWarning] = useState(false);
+
   const subtotal = items.reduce((s, i) => s + (i.price * i.quantity), 0);
-  const shipping = subtotal >= 30 ? 0 : 4.90;
+  const shipping = deliveryType === 'delivery' ? DELIVERY_FEE : 0;
   const total = subtotal + shipping;
+
+  const handleDeliveryChange = (type: 'delivery' | 'pickup') => {
+    setDeliveryType(type);
+    if (type === 'delivery') setPaymentMethod('bizum');
+  };
+
+  const handleCityChange = (val: string) => {
+    setForm(f => ({ ...f, city: val }));
+    setCityWarning(val.trim().length > 2 && val.trim().toLowerCase() !== 'barcelona');
+  };
 
   const buildWhatsAppMessage = () => {
     const lines = items.map(i => `• ${i.name} x${i.quantity} — ${(i.price * i.quantity).toFixed(2)}€`).join('\n');
-    const shippingLine = shipping === 0 ? 'Gratis 🎉' : `${shipping.toFixed(2)}€`;
+    const deliveryLine = deliveryType === 'delivery'
+      ? `🚚 *Envío a domicilio* (+${DELIVERY_FEE.toFixed(2)}€)\n📍 ${form.address}${form.city ? `, ${form.city}` : ''}`
+      : `🏪 *Recogida en domicilio de la fundadora* (gratis)`;
+    const paymentLine = paymentMethod === 'bizum'
+      ? `💳 *Pago:* Bizum al ${BIZUM_DISPLAY}\n📎 Adjunto el comprobante del pago a continuación.`
+      : `💳 *Pago:* En mano al recoger`;
     return encodeURIComponent(
-      `¡Hola! 👋 Me gustaría hacer el siguiente pedido:\n\n🛒 *Mi pedido:*\n${lines}\n\n📦 Envío: ${shippingLine}\n💰 *Total: ${total.toFixed(2)}€*\n\n¿Está todo disponible? 🌿`
+      `¡Hola! 👋 Quiero hacer este pedido:\n\n` +
+      `👤 *Mis datos:*\n` +
+      `Nombre: ${form.name}\n` +
+      `Teléfono: ${form.phone}` +
+      (form.email ? `\nEmail: ${form.email}` : '') +
+      `\n\n🛒 *Productos:*\n${lines}\n\n` +
+      `${deliveryLine}\n\n` +
+      `${paymentLine}\n\n` +
+      `📦 Envío: ${shipping === 0 ? 'Gratis (recogida)' : `${shipping.toFixed(2)}€`}\n` +
+      `💰 *Total: ${total.toFixed(2)}€*\n\n` +
+      `¿Podéis confirmarlo? 🌿`
     );
   };
 
   const handleWhatsAppOrder = () => {
+    if (!form.name.trim() || !form.phone.trim()) {
+      setFormError('Por favor completa tu nombre y teléfono para continuar.');
+      return;
+    }
+    if (deliveryType === 'delivery' && !form.address.trim()) {
+      setFormError('Por favor introduce tu dirección de envío.');
+      return;
+    }
+    setFormError('');
     window.open(`https://wa.me/${WHATSAPP_ORDER_NUMBER}?text=${buildWhatsAppMessage()}`, '_blank');
   };
 
@@ -1499,12 +1543,15 @@ const CartPage = ({
     );
   }
 
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-brand-bg-alt bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30 placeholder:text-brand-text-light/60 transition-all";
+
   return (
     <div className="pt-32 pb-20 px-6 md:px-12 min-h-screen">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-serif mb-12">Tu Carrito</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-16">
+          {/* Items */}
           <div className="lg:col-span-2 space-y-6">
             <AnimatePresence mode="popLayout">
               {items.map(item => (
@@ -1545,40 +1592,223 @@ const CartPage = ({
             </AnimatePresence>
           </div>
 
+          {/* Checkout panel */}
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-premium p-10 rounded-[2rem] border border-white/40 h-fit sticky top-32"
+            className="glass-premium p-8 rounded-[2rem] border border-white/40 h-fit sticky top-32 space-y-8"
           >
-            <h3 className="text-2xl font-serif font-bold mb-8 pb-6 border-bottom border-brand-bg-alt">Resumen</h3>
-            <div className="space-y-4 mb-8">
+            {/* Customer data */}
+            <div>
+              <h3 className="text-xl font-serif font-bold mb-5">Tus datos</h3>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  placeholder="Nombre completo *"
+                  value={form.name}
+                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  className={inputClass}
+                />
+                <input
+                  type="tel"
+                  placeholder="Teléfono *"
+                  value={form.phone}
+                  onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                  className={inputClass}
+                />
+                <input
+                  type="email"
+                  placeholder="Email (opcional)"
+                  value={form.email}
+                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                  className={inputClass}
+                />
+              </div>
+            </div>
+
+            {/* Delivery type */}
+            <div>
+              <h3 className="text-xl font-serif font-bold mb-4">Entrega</h3>
+              <div className="space-y-3">
+                <label className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${deliveryType === 'delivery' ? 'border-brand-primary bg-brand-primary/5' : 'border-brand-bg-alt bg-white hover:border-brand-primary/40'}`}>
+                  <input
+                    type="radio"
+                    name="deliveryType"
+                    value="delivery"
+                    checked={deliveryType === 'delivery'}
+                    onChange={() => handleDeliveryChange('delivery')}
+                    className="mt-0.5 accent-brand-primary"
+                  />
+                  <div>
+                    <p className="font-bold text-sm">Envío a domicilio</p>
+                    <p className="text-xs text-brand-text-light mt-0.5">Solo Barcelona · +{DELIVERY_FEE.toFixed(2)} €</p>
+                  </div>
+                </label>
+                <label className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${deliveryType === 'pickup' ? 'border-brand-primary bg-brand-primary/5' : 'border-brand-bg-alt bg-white hover:border-brand-primary/40'}`}>
+                  <input
+                    type="radio"
+                    name="deliveryType"
+                    value="pickup"
+                    checked={deliveryType === 'pickup'}
+                    onChange={() => handleDeliveryChange('pickup')}
+                    className="mt-0.5 accent-brand-primary"
+                  />
+                  <div>
+                    <p className="font-bold text-sm">Recoger en domicilio</p>
+                    <p className="text-xs text-brand-text-light mt-0.5">Gratis · La fundadora te indica la dirección</p>
+                  </div>
+                </label>
+              </div>
+
+              {/* Address fields (delivery only) */}
+              <AnimatePresence>
+                {deliveryType === 'delivery' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-3 space-y-3">
+                      <input
+                        type="text"
+                        placeholder="Calle y número *"
+                        value={form.address}
+                        onChange={e => setForm(f => ({ ...f, address: e.target.value }))}
+                        className={inputClass}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Ciudad"
+                        value={form.city}
+                        onChange={e => handleCityChange(e.target.value)}
+                        className={inputClass}
+                      />
+                      {cityWarning && (
+                        <motion.p
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 flex items-start gap-1.5"
+                        >
+                          <Info size={13} className="mt-0.5 flex-shrink-0" />
+                          De momento solo hacemos envíos dentro de Barcelona. Para otras ciudades, escríbenos por WhatsApp.
+                        </motion.p>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Payment method */}
+            <div>
+              <h3 className="text-xl font-serif font-bold mb-4">Pago</h3>
+              <AnimatePresence mode="wait">
+                {deliveryType === 'delivery' ? (
+                  <motion.div
+                    key="payment-delivery"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="bg-brand-primary/5 border border-brand-primary/20 rounded-xl p-4 space-y-2"
+                  >
+                    <p className="text-sm font-bold flex items-center gap-2">
+                      <span>Bizum</span>
+                      <span className="text-[10px] font-normal bg-brand-primary text-white px-2 py-0.5 rounded-full">Obligatorio</span>
+                    </p>
+                    <p className="text-xs text-brand-text-light leading-relaxed">
+                      El envío a domicilio requiere pago previo. Envía el importe por Bizum a:
+                    </p>
+                    <p className="text-sm font-bold text-brand-primary tracking-wide">{BIZUM_DISPLAY}</p>
+                    <p className="text-xs text-brand-text-light">Al enviar el pedido por WhatsApp, adjunta el comprobante del Bizum en el mismo chat.</p>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="payment-pickup"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="space-y-3"
+                  >
+                    <label className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMethod === 'bizum' ? 'border-brand-primary bg-brand-primary/5' : 'border-brand-bg-alt bg-white hover:border-brand-primary/40'}`}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="bizum"
+                        checked={paymentMethod === 'bizum'}
+                        onChange={() => setPaymentMethod('bizum')}
+                        className="mt-0.5 accent-brand-primary"
+                      />
+                      <div>
+                        <p className="font-bold text-sm">Pagar por Bizum</p>
+                        <p className="text-xs text-brand-text-light mt-0.5">Transferencia previa al {BIZUM_DISPLAY}</p>
+                      </div>
+                    </label>
+                    <label className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMethod === 'cash' ? 'border-brand-primary bg-brand-primary/5' : 'border-brand-bg-alt bg-white hover:border-brand-primary/40'}`}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="cash"
+                        checked={paymentMethod === 'cash'}
+                        onChange={() => setPaymentMethod('cash')}
+                        className="mt-0.5 accent-brand-primary"
+                      />
+                      <div>
+                        <p className="font-bold text-sm">Pagar en mano al recoger</p>
+                        <p className="text-xs text-brand-text-light mt-0.5">Efectivo o Bizum en el momento de recogida</p>
+                      </div>
+                    </label>
+                    {paymentMethod === 'bizum' && (
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-xs text-brand-text-light bg-brand-bg rounded-lg px-3 py-2"
+                      >
+                        Recuerda adjuntar el comprobante del Bizum en el chat de WhatsApp.
+                      </motion.p>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Order summary */}
+            <div className="border-t border-brand-bg-alt pt-6 space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-brand-text-light">Subtotal</span>
                 <span className="font-bold">{subtotal.toFixed(2)} €</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-brand-text-light">Envío</span>
-                <span className="font-bold">{shipping === 0 ? "Gratis" : `${shipping.toFixed(2)} €`}</span>
+                <span className="font-bold">{shipping === 0 ? 'Gratis' : `${shipping.toFixed(2)} €`}</span>
               </div>
-              {shipping > 0 && (
-                <p className="text-[10px] text-brand-primary font-medium italic">
-                  Envío gratis en pedidos superiores a 30€
-                </p>
-              )}
+              <div className="flex justify-between text-lg font-bold pt-3 border-t border-brand-bg-alt">
+                <span>Total</span>
+                <span>{total.toFixed(2)} €</span>
+              </div>
             </div>
-            <div className="flex justify-between text-xl font-bold pt-6 border-t border-brand-bg-alt mb-10">
-              <span>Total</span>
-              <span>{total.toFixed(2)} €</span>
-            </div>
+
+            {/* Error */}
+            {formError && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+              >
+                {formError}
+              </motion.p>
+            )}
+
+            {/* CTA */}
             <button
               onClick={handleWhatsAppOrder}
-              className="w-full flex items-center justify-center gap-3 bg-brand-primary text-white py-4 rounded-lg font-bold uppercase tracking-widest shadow-xl hover:bg-brand-primary-dark hover:-translate-y-0.5 transition-all active:scale-95"
+              className="w-full flex items-center justify-center gap-3 bg-brand-primary text-white py-4 rounded-xl font-bold uppercase tracking-widest shadow-xl hover:bg-brand-primary-dark hover:-translate-y-0.5 transition-all active:scale-95"
             >
               <WhatsAppIcon />
-              Pedir por WhatsApp
+              Enviar pedido
             </button>
-            <p className="mt-5 text-center text-[11px] text-brand-text-light leading-relaxed">
-              Te abrirá WhatsApp con tu pedido listo. La fundadora lo confirma y gestiona el envío contigo.
+            <p className="text-center text-[11px] text-brand-text-light leading-relaxed">
+              Se abrirá WhatsApp con tu pedido completo. La fundadora lo confirmará y coordinará la entrega contigo.
             </p>
           </motion.div>
         </div>
