@@ -84,7 +84,7 @@ function buildQuizEmailHtml(recipient: QuizEmailRecipient, routine: Routine): st
                   ${firstStep.productName}
                 </p>
                 <p style="margin:0 0 10px;font-family:Helvetica,Arial,sans-serif;font-size:13px;color:${colors.terracota};font-weight:bold;">
-                  ${firstStep.productPrice} · ${firstStep.frequency}
+                  ${firstStep.frequency}
                 </p>
                 <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#3a3a3a;line-height:1.6;">
                   ${firstStep.instructions}

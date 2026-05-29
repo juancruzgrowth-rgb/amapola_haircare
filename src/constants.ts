@@ -10,7 +10,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Mascarilla intensiva · Nutrición y suavidad',
     price: 24.90,
     category: 'tratamiento',
-    image: 'https://picsum.photos/seed/deeptreatment/800/800',
+    image: '/tratamiento-profundo.png',
     description: 'Mascarilla nutritiva de uso semanal. Nutre, suaviza y aporta brillo al cabello seco, opaco o con frizz.',
     badge: 'Bestseller',
     fullDescription: 'Tratamiento de enjuague con una combinación rica de manteca de mango, aceites vegetales y activos acondicionadores. Su textura está pensada para envolver la fibra capilar, mejorar la sensación al tacto y acompañar la rutina de cabellos secos, opacos o con frizz.',
@@ -36,7 +36,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Pre-lavado oleoso · Sellado y control del frizz',
     price: 22.90,
     category: 'crecimiento',
-    image: 'https://picsum.photos/seed/folicular/800/800',
+    image: '/tratamiento-folicular.png',
     description: 'Ritual previo al lavado con aceites vegetales y fitosilicona natural. Suaviza, sella y protege la fibra antes de lavar.',
     fullDescription: 'Mezcla nutritiva de aceites vegetales y fitosilicona natural concebida para aplicarse antes del shampoo. Forma una película cosmética liviana sobre el cabello y ayuda a disminuir la sensación de resequedad que puede aparecer luego del lavado.',
     benefits: [
@@ -60,7 +60,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Limpieza suave · Hidratación y confort',
     price: 18.90,
     category: 'limpieza',
-    image: 'https://picsum.photos/seed/shampoo-seco/800/800',
+    image: '/shampoo.png',
     description: 'Shampoo de uso habitual con botánicos aromáticos, proteínas capilares y humectantes. Limpieza delicada y experiencia sensorial.',
     fullDescription: 'Shampoo de uso habitual enriquecido con botánicos aromáticos, humectantes y proteínas capilares. Su propuesta combina limpieza con una experiencia sensorial serena, respetando la estética natural y delicada de Amapola.',
     benefits: [
@@ -109,7 +109,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Desenredo y reparación cosmética · Uso post-lavado',
     price: 16.50,
     category: 'hidratacion-nutricion',
-    image: 'https://picsum.photos/seed/conditioner/800/800',
+    image: '/acondicionador.png',
     description: 'Acondicionador cremoso post-lavado. Hidrata, suaviza y facilita el desenredo. Aceites de aguacate, coco y proteína de arroz.',
     fullDescription: 'Acondicionador cremoso que combina aceites vegetales, aloe vera, glicerina y activos acondicionadores para mejorar el tacto de la fibra luego del shampoo. Su función es cerrar la rutina de lavado dejando el cabello más suave y protegido cosméticamente.',
     benefits: [
@@ -134,7 +134,7 @@ export const PRODUCTS: Product[] = [
     subtitle: 'Renovación suave · Cuidado del cuero cabelludo',
     price: 21.90,
     category: 'limpieza',
-    image: 'https://picsum.photos/seed/exfoliante/800/800',
+    image: '/exfoliante.png',
     description: 'Limpieza complementaria y renovación del cuero cabelludo. Base acondicionadora con aceite de coco para una experiencia suave.',
     fullDescription: 'Producto pensado para sumar una limpieza complementaria a la rutina capilar. La base acondicionadora junto con aceite de coco y vitamina B3 busca mantener una experiencia suave y nutritiva durante el ritual de renovación.',
     benefits: [
