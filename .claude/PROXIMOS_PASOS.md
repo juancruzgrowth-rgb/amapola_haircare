@@ -1,7 +1,7 @@
 # Amapola — Próximos Pasos
 
-> Última actualización: 2026-05-29 (sesión 5)
-> Estado: Reseñas reales (11 imgs) con galería circular 3D. Sección Instagram oculta hasta Meta Developer. Favicon y logo-quiz actualizados. Hero mobile corregido. Sección "Por qué Amapola" ajustada en mobile. Pendiente: activar blog en Supabase, imágenes reales de productos, chatbot.
+> Última actualización: 2026-05-29 (sesión 6)
+> Estado: Logos navbar y quiz actualizados (versión corregida). Hero mobile con más altura. Botón CTA reviews con más separación. Focus de inputs mejorado (solo borde fino). Mensaje WhatsApp reformateado con bullets y negrita. Imágenes shampoo y exfoliante actualizadas. Fotos de productos y guía de branding subidas al repo.
 
 ---
 
@@ -42,7 +42,7 @@ SUPABASE_URL=...
 SUPABASE_SERVICE_ROLE_KEY=...
 RESEND_API_KEY=...
 RESEND_FROM_EMAIL=hola@amapola.com   # debe estar verificado en Resend
-GEMINI_API_KEY=...
+GEMINI_API_KEY=...                   # ⚠️ la key actual (formato AQ.) tiene quota 0 — crear nueva en aistudio.google.com (debe empezar con AIzaSy)
 BLOG_CRON_SECRET=...
 TELEGRAM_BOT_TOKEN=...
 TELEGRAM_OWNER_CHAT_ID=...
@@ -71,7 +71,7 @@ Verificar:
 
 ---
 
-### 4. Insertar los 3 blog posts iniciales en Supabase ⚡ NUEVO
+### 4. Insertar los 3 blog posts iniciales en Supabase
 
 Los posts están escritos en español con imágenes relevantes (Unsplash, temática capilar).
 El seed está en `supabase/seed.sql`. Hay dos formas de insertarlos:
@@ -127,49 +127,55 @@ O más fácil: ir a vercel.com → proyecto → Settings → Environment Variabl
 
 ## Contexto para la próxima sesión con Claude
 
-### Lo que está implementado (Fase 3.1 + Sesión 4 ✅)
+### Lo que está implementado (Sesiones 1–6 ✅)
 
 | Feature | Estado | Archivos clave |
 |---|---|---|
-| Logo grande en quiz (paso inicial) | ✅ | `src/App.tsx` — usa `public/logo-quiz.svg` |
-| Logo footer | ✅ | `src/App.tsx` — usa `public/logo-footer.svg` |
-| Favicon personalizado | ✅ | `index.html` → `/favicon.svg` — `public/favicon.svg` |
-| Sección newsletter en la web | ✅ | `src/App.tsx` — `NewsletterSection` component |
+| Logo navbar | ✅ actualizado sesión 6 | `public/logo-navbar.svg` |
+| Logo quiz (paso inicial) | ✅ actualizado sesión 6 | `public/logo-quiz.svg` |
+| Logo footer | ✅ | `public/logo-footer.svg` |
+| Favicon personalizado | ✅ | `public/favicon.svg` |
+| Hero mobile height | ✅ ampliado sesión 6 (500px) | `src/App.tsx` línea ~729 |
+| Botón CTA bajo reviews | ✅ más separación sesión 6 | `src/App.tsx` — `mt-16` |
+| Focus de inputs | ✅ solo borde fino sesión 6 | `src/App.tsx` + `src/index.css` |
+| Mensaje WhatsApp | ✅ bullets + negrita sesión 6 | `src/App.tsx` — `buildWhatsAppMessage()` |
+| Imágenes de productos | ✅ fotos reales sesión 6 | `public/` — shampoo-dry-2, productos-9, etc. |
+| Fotos originales en repo | ✅ subidas sesión 6 | `productos/` (27 imágenes) |
+| Guía de branding en repo | ✅ subida sesión 6 | `img-logotipos/images/guia-branding-amapola.pdf` |
+| Sección newsletter | ✅ | `src/App.tsx` — `NewsletterSection` |
 | Quiz conectado al backend | ✅ | `src/App.tsx` → `POST /api/quiz/submit` |
-| Tabla quiz_responses en Supabase | ✅ migración lista, ❌ **no pusheada aún** | `supabase/migrations/004_create_quiz_responses.sql` |
-| PDF con branding oficial (5 páginas) | ✅ | `server/services/pdf.tsx` (colores `#3D6044`, `#A75754`, `#F7F5F0`) |
-| Rutina personalizada con Gemini | ✅ | `server/services/recommendations.ts` |
+| Tabla quiz_responses Supabase | ✅ migración lista, ❌ no pusheada aún | `supabase/migrations/004_create_quiz_responses.sql` |
+| PDF con branding oficial (5 páginas) | ✅ | `server/services/pdf.tsx` — sin precios, colores `#5D6044`/`#A75754`/`#F7F5F0` |
+| Rutina personalizada con Gemini | ✅ (fallback si quota 0) | `server/services/recommendations.ts` |
 | Email con PDF adjunto vía Resend | ✅ | `server/services/email-quiz.ts` |
 | Route `POST /api/quiz/submit` | ✅ | `server/routes/quiz.ts` |
 | Skill `amapola-newsletter` | ✅ | `.claude/skills/amapola-newsletter/SKILL.md` |
-| 3 blog posts iniciales (seed.sql) | ✅ listo, ❌ **no insertado en DB aún** | `supabase/seed.sql` — ver paso 4 |
-| Blog navegable (home → detalle) | ✅ | Cards de home ahora abren el post directamente |
-| Categorías de productos | ✅ | limpieza / hidratación-nutrición / tratamiento / crecimiento |
-| Productos reales (6 productos) | ✅ | `src/constants.ts` — extraídos del PDF de fichas de producto |
-| Página de detalle de producto | ✅ | `src/App.tsx` — `ProductDetailPage` component, routing via `activePage` |
-| Tarjetas de producto con descripción | ✅ | `src/App.tsx` — `ProductCard` muestra snippet + "Ver detalle →" |
-| Animación flores hero (Lucide icons) | ✅ | `src/App.tsx` — `Flower`/`Flower2` en color `#b35151` con rotación |
-| Logo navbar | ✅ | Reemplazado por SVG — `public/logo-navbar.svg` |
-| Cambios visuales homepage | ✅ | Logo navbar, hero image, historia, reels, iconos quiz |
-| Carrito: formulario checkout | ✅ | `src/App.tsx` — `CartPage` con nombre, teléfono, email |
-| Carrito: opciones de entrega | ✅ | Envío a domicilio (solo BCN, +5€) · Recogida en domicilio (gratis) |
-| Carrito: opciones de pago | ✅ | Bizum obligatorio en envío · Bizum o en mano en recogida |
-| Carrito: pedido detallado por WhatsApp | ✅ | Mensaje incluye productos, datos, entrega, pago y total |
+| 3 blog posts (seed.sql) | ✅ listo, ❌ no insertado en DB aún | `supabase/seed.sql` |
+| Blog navegable (home → detalle) | ✅ | `src/App.tsx` |
+| 6 productos reales con detalle | ✅ | `src/constants.ts` |
+| Página de detalle de producto | ✅ | `src/App.tsx` — `ProductDetailPage` |
+| Carrito: checkout WhatsApp | ✅ | `src/App.tsx` — `CartPage` |
+| Carrito: opciones de entrega | ✅ | Envío BCN +5€ · Recogida gratis |
+| Carrito: opciones de pago | ✅ | Bizum · En mano |
+| Reseñas con galería circular 3D | ✅ | `src/App.tsx` — `CircularGallery` |
+| Sección Instagram | ⏸ oculta | Activar cuando Kleo tenga Meta Developer |
 
-### Guía de branding (extraída de las imágenes — para referencia rápida)
+### Guía de branding (para referencia rápida)
 
 | Color | Hex | Uso |
 |---|---|---|
-| Oliva principal | `#3D6044` | Títulos, headers, botones primarios |
+| Oliva principal | `#5D6044` | Títulos, headers, botones primarios |
 | Terracota acento | `#A75754` | CTAs, badges, highlights |
 | Crema suave | `#F7F5F0` | Fondos principales |
 | Arena cálida | `#D9D2C8` | Fondos secundarios, separadores |
 | Verde salvia | `#BFC3AE` | Acentos sutiles |
 
 Tipografía: **Cormorant Garamond** (display) + **Inter** (texto). ADN: Natural · Elegante · Delicada · Premium.
+Guía completa: `img-logotipos/images/guia-branding-amapola.pdf`
 
 ### Skills disponibles
 - `/amapola-newsletter` — genera HTML email con branding oficial
+- `/deploy-check` — validaciones pre-deploy
 
 ---
 
@@ -195,12 +201,11 @@ Tipografía: **Cormorant Garamond** (display) + **Inter** (texto). ADN: Natural 
 
 ### Fase 3.6 — E-commerce Stripe (pospuesta)
 
-**Estado actual (sesión 3):** el carrito gestiona pedidos vía WhatsApp con Bizum manual o pago en mano. Funciona para el volumen actual sin pasarela online.
+**Estado actual:** el carrito gestiona pedidos vía WhatsApp con Bizum manual o pago en mano. Funciona para el volumen actual sin pasarela online.
 
 **Cuándo retomar:** cuando el volumen de pedidos justifique automatizar cobros, o cuando Kleo quiera eliminar la fricción del Bizum manual.
 
 **Pasos cuando se retome:**
-
 1. `npm install stripe @stripe/react-stripe-js @stripe/stripe-js`
 2. Migración Supabase para `orders` y `order_items` (schema en reglas de dominio).
 3. `POST /api/checkout` → crea `PaymentIntent` → devuelve `client_secret`.
@@ -220,17 +225,18 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 - Meta Ads: lookalike de leads del quiz + retargeting visitantes
 - Google Ads: búsqueda por intención ("cuidado cabello rizado natural Spain")
 
-### Notas del desarrollador
-- Necesito mejorar todas las imagenes y quitarle la marca de agua de gemini
-- Terminar la implementacion del quiz haciendo las acciones que pide claude.
-- Crear una skill para que genere los PDF con el branding de la marca y siempre de una misma forma
-- Ajustar skill o prompt para que gemini genere siempre imagenes que tengan un patron de acorde al branding. Generar imagenes y que aparezcan productos de amapola.
--  Terminar el chatbot con informacion de los productos y de la marca y de la fundadora. Crear base de conocimiento.
-- Pedir a kleo todos los testimonios que tiene con sus nombres y si les puede pedir sus fotos de perfil, sino pondremos ficticias pero que no parezcan irreales
-- Insertar todos los productos, con sus descripciones y en la categoria correspondiente
-- Pedir a kleo de crear el meta developer para que se reproduzcan los reels en su web en automatico en esa seccion de red social
-- Probar newsletter, blog y quiz si se generan correctamente
-- Analizar mediante una skill UI/UX de la web y mediante otra skill posibles baches de seguridad.
-- Armar una guia para el propio sistema de adaptacion de logos, y ver si funciona. Si funciona bien adaptarlo a una skill. Ver tambien en que tamaño se debe crear cada logo original. 
-- ver formulario de compra, quitar algunos campos innecesarios y agregar algunos, como piso y puerta. y ver que el mensaje que se envia sea mejorado y que salga el producto cuando este la info en la base de datos de productos.
-- ver logo no se ve bien en mobile 
+---
+
+## Notas del desarrollador (pendiente)
+
+- Terminar la implementacion del quiz: aplicar migraciones Supabase, configurar env vars, probar end-to-end (ver pasos 1–3 arriba)
+- Insertar 3 blog posts en Supabase (ver paso 4 arriba)
+- **Gemini API key**: la actual (formato `AQ.`) tiene quota 0 — crear nueva en aistudio.google.com, debe empezar con `AIzaSy`
+- Pedir a Kleo testimonios reales con nombres y fotos de perfil (o usar fotos ficticias realistas)
+- Pedir a Kleo crear cuenta Meta Developer para activar la sección de reels de Instagram
+- Probar newsletter, blog y quiz end-to-end con datos reales
+- Ver logo navbar en mobile — puede necesitar ajuste de tamaño
+- Revisar formulario de compra: evaluar si quitar campos innecesarios o ajustar layout
+- Terminar chatbot con base de conocimiento (productos, marca, fundadora) — Fase 3.3
+- Mejorar imágenes de blog (actualmente Unsplash genérico — reemplazar con fotos propias de Kleo)
+- Analizar UI/UX y seguridad de la web mediante skills dedicadas
