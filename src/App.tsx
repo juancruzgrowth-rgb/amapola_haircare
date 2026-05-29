@@ -622,7 +622,7 @@ const NewsletterSection = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Tu nombre (opcional)"
-                className="w-full px-5 py-4 bg-white border-2 border-brand-bg rounded-xl text-sm focus:border-brand-primary outline-none transition-all"
+                className="w-full px-5 py-4 bg-white border border-brand-bg-alt rounded-xl text-sm focus:border-brand-primary outline-none transition-all"
                 disabled={status === 'loading'}
               />
               <input
@@ -631,7 +631,7 @@ const NewsletterSection = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@email.com"
-                className="w-full px-5 py-4 bg-white border-2 border-brand-bg rounded-xl text-sm focus:border-brand-primary outline-none transition-all"
+                className="w-full px-5 py-4 bg-white border border-brand-bg-alt rounded-xl text-sm focus:border-brand-primary outline-none transition-all"
                 disabled={status === 'loading'}
               />
             </div>
@@ -726,7 +726,7 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNa
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="relative flex items-center justify-center h-[380px] sm:h-[420px] lg:h-[480px] mt-8 lg:mt-8"
+          className="relative flex items-center justify-center h-[500px] sm:h-[520px] lg:h-[560px] mt-8 lg:mt-8"
         >
           {/* Product Image */}
           <motion.div
@@ -926,7 +926,7 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNa
 
         <CircularGallery items={reviewImages} radius={480} autoRotateSpeed={0.018} className="my-16 md:my-20" />
 
-        <div className="text-center">
+        <div className="text-center mt-16">
           <ShinyButton
             onClick={() => onNavigate('quiz')}
             className="px-10 py-3"
@@ -1642,25 +1642,25 @@ const CartPage = ({
   };
 
   const buildWhatsAppMessage = () => {
-    const lines = items.map(i => `🧴 ${i.name} x${i.quantity} — ${(i.price * i.quantity).toFixed(2)}€`).join('\n');
+    const lines = items.map(i => `  • ${i.name} x${i.quantity} — ${(i.price * i.quantity).toFixed(2)}€`).join('\n');
     const addressDetail = [form.address, form.floor, form.postal ? `CP ${form.postal}` : '', 'Barcelona'].filter(Boolean).join(', ');
     const deliveryLine = deliveryType === 'delivery'
-      ? `🚚 Envío a domicilio (+${DELIVERY_FEE.toFixed(2)}€)\n📍 ${addressDetail}`
-      : `🏪 Recogida en domicilio de la fundadora (gratis)`;
+      ? `Envio a domicilio (+${DELIVERY_FEE.toFixed(2)}€)\n  📍 ${addressDetail}`
+      : `Recogida en domicilio de la fundadora (gratis)`;
     const paymentLine = paymentMethod === 'bizum'
-      ? `💳 Pago: Bizum al ${BIZUM_DISPLAY}\n📎 Adjunto el comprobante del pago a continuación.`
-      : `💳 Pago: En mano al recoger`;
+      ? `Bizum al ${BIZUM_DISPLAY}\n  Adjunto el comprobante a continuacion.`
+      : `En mano al recoger`;
     return encodeURIComponent(
       `Hola! 👋 Quiero hacer este pedido:\n\n` +
-      `👤 Mis datos:\n` +
-      `Nombre: ${form.name}\n` +
-      `Teléfono: ${form.phone}\n\n` +
-      `🛒 Mis productos:\n${lines}\n\n` +
-      `${deliveryLine}\n\n` +
-      `${paymentLine}\n\n` +
-      `📦 Envío: ${shipping === 0 ? 'Gratis (recogida)' : `${shipping.toFixed(2)}€`}\n` +
-      `💰 Total: ${total.toFixed(2)}€\n\n` +
-      `Podéis confirmarlo? 🌿`
+      `*Datos:*\n` +
+      `  • Nombre: ${form.name}\n` +
+      `  • Telefono: ${form.phone}\n\n` +
+      `*Productos:*\n${lines}\n\n` +
+      `*Entrega:* ${deliveryLine}\n\n` +
+      `*Pago:* ${paymentLine}\n\n` +
+      `  Envio: ${shipping === 0 ? 'Gratis (recogida)' : `${shipping.toFixed(2)}€`}\n` +
+      `  Total: ${total.toFixed(2)}€\n\n` +
+      `Podeis confirmarlo? ✅`
     );
   };
 
@@ -1695,7 +1695,7 @@ const CartPage = ({
     );
   }
 
-  const inputClass = "w-full px-4 py-3 rounded-xl border border-brand-bg-alt bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30 placeholder:text-brand-text-light/60 transition-all";
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-brand-bg-alt bg-white text-sm focus:outline-none focus:border-brand-primary placeholder:text-brand-text-light/60 transition-all";
 
   return (
     <div className="pt-32 pb-20 px-6 md:px-12 min-h-screen">
