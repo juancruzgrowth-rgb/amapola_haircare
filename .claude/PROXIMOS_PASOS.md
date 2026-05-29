@@ -1,7 +1,7 @@
 # Amapola — Próximos Pasos
 
-> Última actualización: 2026-05-28 (sesión 4)
-> Estado: Productos reales integrados desde PDF (6 productos con info completa). Página de detalle de producto implementada. Logos SVG (quiz, footer, favicon) en producción. Animación de flores en hero con iconos Lucide en color terracota. Pendiente: activar blog en Supabase, imágenes reales de productos, chatbot.
+> Última actualización: 2026-05-29 (sesión 5)
+> Estado: Reseñas reales (11 imgs) con galería circular 3D. Sección Instagram oculta hasta Meta Developer. Favicon y logo-quiz actualizados. Hero mobile corregido. Sección "Por qué Amapola" ajustada en mobile. Pendiente: activar blog en Supabase, imágenes reales de productos, chatbot.
 
 ---
 
@@ -222,11 +222,9 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 
 ### Notas del desarrollador
 - Necesito mejorar todas las imagenes y quitarle la marca de agua de gemini
-- Cambiar el logotipo del navbar y mejorar el del footer
 - Terminar la implementacion del quiz haciendo las acciones que pide claude.
 - Crear una skill para que genere los PDF con el branding de la marca y siempre de una misma forma
 - Ajustar skill o prompt para que gemini genere siempre imagenes que tengan un patron de acorde al branding. Generar imagenes y que aparezcan productos de amapola.
-- Cambiar lo del chekout del carrito, eliminar pagar por stripe o bizum de momento, y generar un boton que envie el pedido por whatsapp. Aclarar que no se hacen envios fuera de Barcelona de momento.
 -  Terminar el chatbot con informacion de los productos y de la marca y de la fundadora. Crear base de conocimiento.
 - Pedir a kleo todos los testimonios que tiene con sus nombres y si les puede pedir sus fotos de perfil, sino pondremos ficticias pero que no parezcan irreales
 - Insertar todos los productos, con sus descripciones y en la categoria correspondiente

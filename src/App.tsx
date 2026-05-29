@@ -32,7 +32,7 @@ import { cn } from './lib/utils';
 import { Product, CartItem, QuizAnswers } from './types';
 import { PRODUCTS, WHATSAPP_ORDER_NUMBER } from './constants';
 import { ShinyButton } from './components/ShinyButton';
-import { TestimonialsColumn, Testimonial } from './components/TestimonialsColumn';
+import { CircularGallery, GalleryItem } from './components/ui/circular-gallery';
 import { PrivacyPage, CookiesPage, TermsPage } from './components/LegalPages';
 import { Typewriter } from './components/Typewriter';
 import { DisplayCard, DisplayCards } from './components/DisplayCards';
@@ -85,37 +85,18 @@ const BLOG_POSTS: BlogPost[] = [
   }
 ];
 
-const testimonials: Testimonial[] = [
-  {
-    name: "Elena G.",
-    role: "Cabello Rizado",
-    image: "https://picsum.photos/seed/user1/100/100",
-    text: "Llevaba años buscando productos que de verdad funcionaran para mi pelo rizado. La rutina que me recomendó el quiz ha sido un antes y un después. ¡Mis rizos nunca estuvieron tan definidos!"
-  },
-  {
-    name: "Sofía R.",
-    role: "Cabello Seco",
-    image: "https://picsum.photos/seed/user2/100/100",
-    text: "La mascarilla reparadora es increíble. Tenía el pelo super dañado por la decoloración y en un mes noté una diferencia brutal. Ahora mi pelo brilla de verdad."
-  },
-  {
-    name: "Lucía M.",
-    role: "Cuero Cabelludo Sensible",
-    image: "https://picsum.photos/seed/user3/100/100",
-    text: "Me encanta que todo sea natural y que me expliquen exactamente cómo usar cada producto. El PDF personalizado es un detallazo. ¡Se nota que les importa de verdad!"
-  },
-  {
-    name: "Valentina P.",
-    role: "Cabello Liso",
-    image: "https://picsum.photos/seed/user4/100/100",
-    text: "El champú nutritivo deja mi pelo limpio pero sin esa sensación de sequedad. Es la primera vez que siento mi cabello liso con tanto volumen y vida."
-  },
-  {
-    name: "Martina S.",
-    role: "Cabello Ondulado",
-    image: "https://picsum.photos/seed/user5/100/100",
-    text: "Increíble cómo han mejorado mis ondas. El sérum de brillo es mi producto favorito, no deja el pelo pesado y el aroma es simplemente delicioso."
-  }
+const reviewImages: GalleryItem[] = [
+  { url: '/reviews/review-1.png', alt: 'Reseña cliente 1' },
+  { url: '/reviews/review-2.png', alt: 'Reseña cliente 2' },
+  { url: '/reviews/review-3.png', alt: 'Reseña cliente 3' },
+  { url: '/reviews/review-4.png', alt: 'Reseña cliente 4' },
+  { url: '/reviews/review-5.png', alt: 'Reseña cliente 5' },
+  { url: '/reviews/review-6.png', alt: 'Reseña cliente 6' },
+  { url: '/reviews/review-7.png', alt: 'Reseña cliente 7' },
+  { url: '/reviews/review-8.png', alt: 'Reseña cliente 8' },
+  { url: '/reviews/review-9.png', alt: 'Reseña cliente 9' },
+  { url: '/reviews/review-10.png', alt: 'Reseña cliente 10' },
+  { url: '/reviews/review-11.png', alt: 'Reseña cliente 11' },
 ];
 
 // --- Components ---
@@ -745,7 +726,7 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNa
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="relative flex items-center justify-center h-[300px] mt-16 lg:mt-8"
+          className="relative flex items-center justify-center h-[380px] sm:h-[420px] lg:h-[480px] mt-8 lg:mt-8"
         >
           {/* Product Image */}
           <motion.div
@@ -800,7 +781,7 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNa
     </section>
 
     {/* Typewriter Why Choose Us Section */}
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-32 text-center">
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-32 text-center">
       <h2 className="text-sm font-bold text-brand-primary uppercase tracking-[0.4em] mb-12">Por qué elegir Amapola</h2>
       <div className="min-h-[140px] md:min-h-[120px] mb-8">
         <Typewriter
@@ -933,27 +914,25 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNa
     </section>
 
     {/* Testimonials Section */}
-    <section className="py-32 px-6 md:px-12 bg-brand-bg relative overflow-hidden">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-        <div>
+    <section className="py-24 md:py-32 px-6 md:px-12 bg-brand-bg relative overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
           <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">Testimonios</span>
-          <h2 className="text-4xl md:text-5xl font-serif mb-8">Lo que dicen nuestras Amapolas</h2>
-          <p className="text-lg text-brand-text-light mb-12 leading-relaxed">
-            Ellas ya han transformado su cabello siguiendo nuestras rutinas personalizadas. Estos son algunos de sus resultados reales.
+          <h2 className="text-4xl md:text-5xl font-serif mb-6">Lo que dicen nuestras Amapolas</h2>
+          <p className="text-lg text-brand-text-light max-w-xl mx-auto leading-relaxed">
+            Ellas ya han transformado su cabello siguiendo nuestras rutinas personalizadas. Estas son sus reseñas reales.
           </p>
-          <div className="mt-12">
-            <ShinyButton
-              onClick={() => onNavigate('quiz')}
-              className="px-10 py-3"
-            >
-              Quiero mi rutina personalizada
-            </ShinyButton>
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <TestimonialsColumn testimonials={testimonials.slice(0, 3)} duration={25} />
-          <TestimonialsColumn testimonials={testimonials.slice(2, 5)} duration={35} className="mt-12 md:mt-24" />
+        <CircularGallery items={reviewImages} radius={480} autoRotateSpeed={0.018} className="my-16 md:my-20" />
+
+        <div className="text-center">
+          <ShinyButton
+            onClick={() => onNavigate('quiz')}
+            className="px-10 py-3"
+          >
+            Quiero mi rutina personalizada
+          </ShinyButton>
         </div>
       </div>
     </section>
@@ -982,8 +961,8 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNa
 
     <div className="section-divider" />
 
-    {/* Reels Instagram Section */}
-    <ReelsCarousel onAddToCart={onAddToCart} />
+    {/* Reels Instagram Section — activar cuando Kleo tenga Meta Developer */}
+    {/* <ReelsCarousel onAddToCart={onAddToCart} /> */}
 
     <NewsletterSection />
 
