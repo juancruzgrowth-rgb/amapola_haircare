@@ -1,49 +1,30 @@
 # Amapola — Próximos Pasos
 
-> Última actualización: 2026-06-04 (sesión 7)
-> Estado: Blog funcionando con markdown correcto, imágenes generadas con IA usando fotos reales de producto, logo mobile en navbar, proxy Vite corregido, 3 posts seed insertados en Supabase.
+> Última actualización: 2026-06-04 (sesión 7 — fin)
+> Estado: Imágenes del blog regeneradas sin texto (NO_TEXT_RULE), servidor corregido para Vercel (export default app), logo mobile en inicio del quiz, variables de entorno cargadas en Vercel.
 
 ---
 
 ## Acciones que tiene que hacer Kleo / el desarrollador
 
-### 1. Verificar variables de entorno en `.env`
+### 1. ✅ Variables de entorno en Vercel — cargadas en sesión 7
 
-Asegurarse de que estén completas antes de correr el server:
+Variables ya cargadas en Vercel (Production):
+`APP_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `GEMINI_API_KEY`, `BLOG_CRON_SECRET`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_OWNER_CHAT_ID`
 
-```
-APP_URL=https://tudominio.com   # o http://localhost:3000 para local
-SUPABASE_URL=...
-SUPABASE_SERVICE_ROLE_KEY=...
-RESEND_API_KEY=...
-RESEND_FROM_EMAIL=hola@amapola.com   # debe estar verificado en Resend
-GEMINI_API_KEY=...                   # debe empezar con AIzaSy (billing activo en ai.dev/projects)
-BLOG_CRON_SECRET=...
-TELEGRAM_BOT_TOKEN=...
-TELEGRAM_OWNER_CHAT_ID=...
-NOTION_API_KEY=...                   # para skill session-docs
-NOTION_AMAPOLA_PAGE_ID=...          # para skill session-docs
-```
+Pendientes (no críticas aún): `VITE_STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
 
 ---
 
-### 2. Deploy en Vercel
+### 2. Redeploy en Vercel
 
-Una vez que todo funcione local:
+Después de cargar las env vars, hacer redeploy para que tomen efecto:
 
 ```bash
-# Si no está linkeado aún:
-vercel link
-
-# Deploy preview:
-vercel
-
-# Deploy producción:
 vercel --prod
 ```
 
-Asegurarse de que las env vars estén cargadas en Vercel:
-- Ir a vercel.com → proyecto → Settings → Environment Variables y cargar todas.
+O desde el panel: vercel.com → amapola-haircare → Deployments → último deploy → Redeploy.
 
 ---
 
@@ -55,15 +36,17 @@ Asegurarse de que las env vars estén cargadas en Vercel:
 |---|---|---|
 | Logo navbar (desktop) | ✅ | `public/logo-navbar.svg` |
 | Logo navbar (mobile) | ✅ sesión 7 | `public/logo-navbar-mobile.svg` |
-| Logo quiz | ✅ | `public/logo-quiz.svg` |
+| Logo mobile en inicio del quiz | ✅ sesión 7 | `src/App.tsx` línea 1162 — `QuizPage` step 0 |
+| Logo quiz (desktop) | ✅ | `public/logo-quiz.svg` |
 | Logo footer | ✅ | `public/logo-footer.svg` |
 | Favicon personalizado | ✅ | `public/favicon.svg` |
 | Proxy Vite `/api` → Express | ✅ sesión 7 | `vite.config.ts` |
 | Blog: listado + detalle | ✅ | `src/App.tsx`, `src/components/blog/` |
 | Blog: markdown rendering | ✅ sesión 7 | `src/components/blog/BlogDetailPage.tsx` — `parseInline()` + `renderContent()` |
 | Blog: 3 posts seed en Supabase | ✅ sesión 7 | `supabase/seed.sql` — IDs `b1000000-...001/002/003` |
-| Blog: imágenes con IA (referencia fotos reales) | ✅ sesión 7 | `scripts/generate-seed-images.ts` |
-| Blog: generador automático con Gemini | ✅ implementado | `server/services/blog-generator.ts` |
+| Blog: imágenes sin texto (NO_TEXT_RULE) | ✅ sesión 7 | `scripts/generate-seed-images.ts`, `server/services/blog-generator.ts` |
+| Blog: generador automático con Gemini | ✅ sesión 7 | `server/services/blog-generator.ts` — usa `gemini-2.5-flash-image` + foto producto referencia |
+| Servidor: export para Vercel serverless | ✅ sesión 7 | `server/index.ts` — `export default app` + `if VERCEL !== 1` |
 | Quiz conectado al backend | ✅ | `src/App.tsx` → `POST /api/quiz/submit` |
 | Tabla quiz_responses Supabase | ✅ migración lista | `supabase/migrations/004_create_quiz_responses.sql` |
 | PDF con branding oficial (5 páginas) | ✅ | `server/services/pdf.tsx` |
@@ -114,11 +97,9 @@ Guía completa: `img-logotipos/images/guia-branding-amapola.pdf`
 **Cron semanal de generación automática:**
 - Vercel Cron llama `POST /api/blog/generate` cada semana
 - Gemini genera un nuevo post → queda en status `pending_approval` esperando Telegram
-- Variable: `BLOG_CRON_SECRET` ya en `.env`
-
-**Actualizar `blog-generator.ts` para imágenes:**
-- Actualmente usa `generateImages` API (requiere plan Imagen especial)
-- Debe migrar al mismo approach que el seed script: `gemini-2.5-flash-image` con fotos reales de producto como referencia multimodal
+- Variable: `BLOG_CRON_SECRET` ya en `.env` y en Vercel
+- Ya configurado en `vercel.json`: `"crons": [{ "path": "/api/blog/generate", "schedule": "0 9 * * 1" }]`
+- Pendiente: verificar que el endpoint `/api/blog/generate` requiere el header `x-cron-secret`
 
 ---
 
