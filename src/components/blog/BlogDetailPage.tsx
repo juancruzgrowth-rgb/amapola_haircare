@@ -33,31 +33,99 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function renderContent(content: string) {
-  return content.split('\n\n').map((block, i) => {
-    const trimmed = block.trim();
-    if (!trimmed) return null;
+function parseInline(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  const regex = /\*\*([^*]+)\*\*|\*([^*]+)\*/g;
+  let lastIndex = 0;
+  let keyIdx = 0;
+  let match;
 
-    if (trimmed.startsWith('### ')) {
-      return (
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    if (match[1] !== undefined) {
+      parts.push(<span key={keyIdx++} className="font-semibold text-brand-text">{match[1]}</span>);
+    } else if (match[2] !== undefined) {
+      parts.push(<em key={keyIdx++}>{match[2]}</em>);
+    }
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts.length > 0 ? parts : [text];
+}
+
+function renderContent(content: string) {
+  const blocks = content.split('\n\n').map(b => b.trim()).filter(Boolean);
+  const result: React.ReactNode[] = [];
+  let i = 0;
+
+  while (i < blocks.length) {
+    const block = blocks[i];
+
+    if (block.startsWith('### ')) {
+      result.push(
         <h3 key={i} className="font-serif font-bold text-xl text-brand-text mt-8 mb-3">
-          {trimmed.slice(4)}
+          {parseInline(block.slice(4))}
         </h3>
       );
+      i++;
+      continue;
     }
-    if (trimmed.startsWith('## ')) {
-      return (
+
+    if (block.startsWith('## ')) {
+      result.push(
         <h2 key={i} className="font-serif font-bold text-2xl text-brand-text mt-10 mb-4 pb-2 border-b border-brand-bg-alt">
-          {trimmed.slice(3)}
+          {parseInline(block.slice(3))}
         </h2>
       );
+      i++;
+      continue;
     }
-    return (
+
+    if (/^\d+\.\s/.test(block)) {
+      const items: string[] = [];
+      while (i < blocks.length && /^\d+\.\s/.test(blocks[i])) {
+        items.push(blocks[i].replace(/^\d+\.\s/, ''));
+        i++;
+      }
+      result.push(
+        <ol key={`ol-${i}`} className="list-decimal list-outside ml-5 flex flex-col gap-3">
+          {items.map((item, j) => (
+            <li key={j} className="text-brand-text-light leading-relaxed text-base pl-1">
+              {parseInline(item)}
+            </li>
+          ))}
+        </ol>
+      );
+      continue;
+    }
+
+    if (block.startsWith('- ')) {
+      const items: string[] = [];
+      while (i < blocks.length && blocks[i].startsWith('- ')) {
+        items.push(blocks[i].slice(2));
+        i++;
+      }
+      result.push(
+        <ul key={`ul-${i}`} className="list-disc list-outside ml-5 flex flex-col gap-2">
+          {items.map((item, j) => (
+            <li key={j} className="text-brand-text-light leading-relaxed text-base pl-1">
+              {parseInline(item)}
+            </li>
+          ))}
+        </ul>
+      );
+      continue;
+    }
+
+    result.push(
       <p key={i} className="text-brand-text-light leading-relaxed text-base">
-        {trimmed}
+        {parseInline(block)}
       </p>
     );
-  });
+    i++;
+  }
+
+  return result;
 }
 
 export function BlogDetailPage({ postId, onNavigate, onAddToCart }: BlogDetailPageProps) {

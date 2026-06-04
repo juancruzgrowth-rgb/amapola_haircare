@@ -135,7 +135,8 @@ const Navbar = ({
         onClick={() => setActivePage('home')}
         className="flex items-center"
       >
-        <img src="/logo-navbar.svg" alt="Amapola Haircare" className="h-10 md:h-14 w-auto max-w-[150px] md:max-w-[200px] object-contain" />
+        <img src="/logo-navbar-mobile.svg" alt="Amapola Haircare" className="block md:hidden h-10 w-auto max-w-[150px] object-contain" />
+        <img src="/logo-navbar.svg" alt="Amapola Haircare" className="hidden md:block h-14 w-auto max-w-[200px] object-contain" />
       </button>
 
       {/* Desktop Links */}

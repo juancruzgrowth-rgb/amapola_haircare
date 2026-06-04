@@ -119,7 +119,7 @@ Responde ÚNICAMENTE con un objeto JSON válido con esta estructura exacta (sin 
 async function generateAndUploadImage(imagePrompt: string, slug: string): Promise<string> {
   try {
     const imageResponse = await genai.models.generateImages({
-      model: 'imagen-3.0-generate-002',
+      model: 'imagen-4.0-generate-001',
       prompt: imagePrompt,
       config: { numberOfImages: 1, outputMimeType: 'image/jpeg' },
     })
