@@ -17,6 +17,12 @@ app.use('/api/webhooks/telegram', telegramWebhookRouter)
 app.get('/api/health', (_req, res) => res.json({ ok: true }))
 
 const PORT = process.env.PORT || 3001
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+
+// Local dev only — Vercel uses the exported app as a serverless handler
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+}
+
+export default app

@@ -1160,9 +1160,14 @@ const QuizPage = () => {
       content: (
         <div className="text-center py-8">
           <img
+            src="/logo-navbar-mobile.svg"
+            alt="Amapola"
+            className="block md:hidden mx-auto mb-8 h-12 w-auto max-w-[200px] object-contain"
+          />
+          <img
             src="/logo-quiz.svg"
             alt="Amapola"
-            className="mx-auto mb-8 h-44 w-auto object-contain"
+            className="hidden md:block mx-auto mb-8 h-44 w-auto object-contain"
           />
           <p className="text-brand-text-light mb-12 text-lg">
             Responde unas preguntas sencillas y te crearemos una <strong>rutina personalizada</strong> con los productos ideales para tu tipo de cabello.

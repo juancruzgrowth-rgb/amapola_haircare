@@ -1,6 +1,40 @@
+import fs from 'fs'
+import path from 'path'
 import { supabaseAdmin } from '../lib/supabase-admin'
 import { genai } from '../lib/gemini'
 import { sendApprovalRequest } from './telegram'
+
+/**
+ * ABSOLUTE RULE — never override.
+ * Every blog image must be 100% text-free.
+ * If product containers appear: labels must be completely blank (no letters, numbers, symbols).
+ */
+const NO_TEXT_RULE = `
+ABSOLUTE CONSTRAINT — THIS OVERRIDES EVERYTHING ELSE:
+Zero text anywhere in the image. Not one single character, letter, number, symbol, or glyph.
+This applies to: product labels, bottle caps, packaging stickers, backgrounds, surfaces,
+reflections, shadows, ingredient sachets, tags, price tags, handwriting, watermarks — EVERYWHERE.
+If any product bottle or container appears, its label area must be completely blank white or
+plain colored with zero text. Do not render any text element under any circumstances.
+Violating this rule makes the image unusable.
+`.trim()
+
+const PRODUCTOS_DIR = path.join(process.cwd(), 'productos')
+const REFERENCE_IMAGES = [
+  'acondicionador-shampoo.png',
+  'tratamiento-profundo.png',
+  'gotero-tratamiento.png',
+]
+
+function readRandomProductImage(): { data: string; mimeType: string } {
+  const filename = REFERENCE_IMAGES[Math.floor(Math.random() * REFERENCE_IMAGES.length)]
+  const filePath = path.join(PRODUCTOS_DIR, filename)
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Reference image not found: ${filePath}`)
+  }
+  const data = fs.readFileSync(filePath).toString('base64')
+  return { data, mimeType: 'image/png' }
+}
 
 const PRODUCT_IDS = [
   'gotero',
@@ -118,27 +152,50 @@ Responde ÚNICAMENTE con un objeto JSON válido con esta estructura exacta (sin 
 
 async function generateAndUploadImage(imagePrompt: string, slug: string): Promise<string> {
   try {
-    const imageResponse = await genai.models.generateImages({
-      model: 'imagen-4.0-generate-001',
-      prompt: imagePrompt,
-      config: { numberOfImages: 1, outputMimeType: 'image/jpeg' },
+    const { data: refData, mimeType: refMime } = readRandomProductImage()
+
+    const fullPrompt = `${NO_TEXT_RULE}
+
+Using the color palette, lighting mood, and brand aesthetic from the reference product photo,
+create an editorial haircare photograph. Additional rules:
+- Focus: natural ingredients, hair textures, botanicals, lifestyle details
+- If product bottles appear: labels must be completely blank (solid color, zero text)
+- Warm natural light, cream and beige tones, terracotta and forest green accents
+- Minimalist clean composition, professional product photography style
+- 16:9 horizontal format for blog header
+- High-end Spanish beauty brand aesthetic, soft focus
+
+Scene: ${imagePrompt}`
+
+    const response = await genai.models.generateContent({
+      model: 'gemini-2.5-flash-image',
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            { inlineData: { mimeType: refMime, data: refData } },
+            { text: fullPrompt },
+          ],
+        },
+      ],
+      config: { responseModalities: ['IMAGE'] },
     })
 
-    const imageBytes = imageResponse.generatedImages?.[0]?.image?.imageBytes
-    if (!imageBytes) {
-      throw new Error('No image bytes returned from Imagen')
-    }
+    const imagePart = response.candidates?.[0]?.content?.parts?.find(
+      (p: { inlineData?: { data?: string; mimeType?: string } }) => p.inlineData?.data
+    )
+    if (!imagePart?.inlineData?.data) throw new Error('No image returned from Gemini')
 
-    const imageBuffer = Buffer.from(imageBytes, 'base64')
-    const filename = `${Date.now()}-${slug}.jpg`
+    const outMimeType = imagePart.inlineData.mimeType ?? 'image/jpeg'
+    const ext = outMimeType.includes('jpeg') ? 'jpg' : 'png'
+    const imageBuffer = Buffer.from(imagePart.inlineData.data, 'base64')
+    const filename = `${Date.now()}-${slug}.${ext}`
 
     const { error: uploadError } = await supabaseAdmin.storage
       .from('blog-images')
-      .upload(filename, imageBuffer, { contentType: 'image/jpeg', upsert: false })
+      .upload(filename, imageBuffer, { contentType: outMimeType, upsert: false })
 
-    if (uploadError) {
-      throw new Error(`Storage upload failed: ${uploadError.message}`)
-    }
+    if (uploadError) throw new Error(`Storage upload failed: ${uploadError.message}`)
 
     const { data: { publicUrl } } = supabaseAdmin.storage
       .from('blog-images')
