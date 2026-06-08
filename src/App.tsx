@@ -1673,30 +1673,61 @@ const CartPage = ({
   };
 
   const buildWhatsAppMessage = () => {
-    const lines = items
-      .map(i => `• ${i.name} (x${i.quantity}) — ${(i.price * i.quantity).toFixed(2)}€`)
-      .join('\n');
+    // El WhatsApp de escritorio tiene una fuente que no renderiza emojis ni bullets
+    // (salen como tofu "◇?"). En mobile sí funcionan. Detectamos el dispositivo y
+    // armamos el mensaje en consecuencia: mobile con emojis, escritorio en texto plano.
+    const isMobile = /android|iphone|ipad|ipod|mobile|iemobile|opera mini/i.test(navigator.userAgent);
     const addressDetail = [form.address, form.floor, form.postal ? `CP ${form.postal}` : '', 'Barcelona'].filter(Boolean).join(', ');
+
+    if (isMobile) {
+      const lines = items
+        .map(i => `• ${i.name} (x${i.quantity}) — ${(i.price * i.quantity).toFixed(2)}€`)
+        .join('\n');
+      const deliveryLine = deliveryType === 'delivery'
+        ? `🚚 Envío a domicilio (+${DELIVERY_FEE.toFixed(2)}€)\n📍 ${addressDetail}`
+        : `🏠 Recogida en domicilio de la fundadora (gratis)`;
+      const paymentLine = paymentMethod === 'bizum'
+        ? `💳 Bizum al ${BIZUM_DISPLAY}\n📎 Adjunto el comprobante a continuación.`
+        : `💵 En mano al recoger`;
+      return encodeURIComponent(
+        `🌸 *Nuevo pedido — Amapola* 🌸\n\n` +
+        `👤 *Tus datos*\n` +
+        `• Nombre: ${form.name}\n` +
+        `• Teléfono: ${form.phone}\n\n` +
+        `🛒 *Productos*\n${lines}\n\n` +
+        `📦 *Entrega*\n${deliveryLine}\n\n` +
+        `💰 *Pago*\n${paymentLine}\n\n` +
+        `📋 *Resumen*\n` +
+        `• Subtotal: ${subtotal.toFixed(2)}€\n` +
+        `• Envío: ${shipping === 0 ? 'Gratis (recogida)' : `${shipping.toFixed(2)}€`}\n` +
+        `• *Total: ${total.toFixed(2)}€*\n\n` +
+        `¿Podéis confirmarlo? ✅`
+      );
+    }
+
+    // Escritorio: texto plano, sin emojis ni bullets (solo guiones ASCII).
+    const lines = items
+      .map(i => `- ${i.name} (x${i.quantity}): ${(i.price * i.quantity).toFixed(2)}€`)
+      .join('\n');
     const deliveryLine = deliveryType === 'delivery'
-      ? `🚚 Envío a domicilio (+${DELIVERY_FEE.toFixed(2)}€)\n📍 ${addressDetail}`
-      : `🏠 Recogida en domicilio de la fundadora (gratis)`;
+      ? `- Envío a domicilio (+${DELIVERY_FEE.toFixed(2)}€)\n- ${addressDetail}`
+      : `- Recogida en domicilio de la fundadora (gratis)`;
     const paymentLine = paymentMethod === 'bizum'
-      ? `💳 Bizum al ${BIZUM_DISPLAY}\n🧾 Adjunto el comprobante a continuación.`
-      : `💶 En mano al recoger`;
+      ? `- Bizum al ${BIZUM_DISPLAY}\n- Adjunto el comprobante a continuación.`
+      : `- En mano al recoger`;
     return encodeURIComponent(
-      `🌸 *Nuevo pedido — Amapola* 🌸\n` +
-      `━━━━━━━━━━━━━━━\n\n` +
-      `👤 *Tus datos*\n` +
-      `• Nombre: ${form.name}\n` +
-      `• Teléfono: ${form.phone}\n\n` +
-      `🛍️ *Productos*\n${lines}\n\n` +
-      `📦 *Entrega*\n${deliveryLine}\n\n` +
-      `💰 *Pago*\n${paymentLine}\n\n` +
-      `🧮 *Resumen*\n` +
-      `• Subtotal: ${subtotal.toFixed(2)}€\n` +
-      `• Envío: ${shipping === 0 ? 'Gratis (recogida)' : `${shipping.toFixed(2)}€`}\n` +
-      `• *Total: ${total.toFixed(2)}€*\n\n` +
-      `¿Podéis confirmarlo? ✅`
+      `*NUEVO PEDIDO - AMAPOLA*\n\n` +
+      `*Tus datos*\n` +
+      `- Nombre: ${form.name}\n` +
+      `- Teléfono: ${form.phone}\n\n` +
+      `*Productos*\n${lines}\n\n` +
+      `*Entrega*\n${deliveryLine}\n\n` +
+      `*Pago*\n${paymentLine}\n\n` +
+      `*Resumen*\n` +
+      `- Subtotal: ${subtotal.toFixed(2)}€\n` +
+      `- Envío: ${shipping === 0 ? 'Gratis (recogida)' : `${shipping.toFixed(2)}€`}\n` +
+      `- *Total: ${total.toFixed(2)}€*\n\n` +
+      `¿Podéis confirmarlo?`
     );
   };
 

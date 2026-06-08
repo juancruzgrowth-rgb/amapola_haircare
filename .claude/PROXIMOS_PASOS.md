@@ -1,7 +1,7 @@
 # Amapola — Próximos Pasos
 
-> Última actualización: 2026-06-04 (sesión 7 — fin)
-> Estado: Imágenes del blog regeneradas sin texto (NO_TEXT_RULE), servidor corregido para Vercel (export default app), logo mobile en inicio del quiz, variables de entorno cargadas en Vercel.
+> Última actualización: 2026-06-08 (sesión 8 — fin)
+> Estado: Home muestra las imágenes reales de los últimos posts del blog (fetch a `/api/blog/posts`), carrito persistido en localStorage (no se pierde al recargar), y mensaje de pedido por WhatsApp con formato adaptado al dispositivo (mobile con emojis, escritorio en texto plano porque su fuente no renderiza emojis/bullets).
 
 ---
 
@@ -55,7 +55,10 @@ O desde el panel: vercel.com → amapola-haircare → Deployments → último de
 | Route `POST /api/quiz/submit` | ✅ | `server/routes/quiz.ts` |
 | 6 productos reales con detalle | ✅ | `src/constants.ts` |
 | Carrito: checkout WhatsApp | ✅ | `src/App.tsx` — `CartPage` |
+| Carrito: persistencia localStorage | ✅ sesión 8 | `src/App.tsx` — key `amapola_cart` (no se pierde al recargar) |
 | Carrito: opciones de entrega y pago | ✅ | Envío BCN +5€ · Recogida gratis · Bizum · En mano |
+| WhatsApp: mensaje adaptado al dispositivo | ✅ sesión 8 | `src/App.tsx` — `buildWhatsAppMessage()` (mobile=emojis, escritorio=texto plano) |
+| Home: últimos posts con imágenes reales | ✅ sesión 8 | `src/App.tsx` — `Home` fetch `/api/blog/posts?limit=3` + fallback estático |
 | Reseñas con galería circular 3D | ✅ | `src/App.tsx` — `CircularGallery` |
 | Sección newsletter | ✅ | `src/App.tsx` — `NewsletterSection` |
 | Skill `amapola-newsletter` | ✅ | `.claude/skills/amapola-newsletter/SKILL.md` |
