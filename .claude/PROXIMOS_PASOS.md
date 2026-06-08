@@ -145,3 +145,10 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 ### Fase 3.7 — Ads
 - Meta Ads: lookalike de leads del quiz + retargeting visitantes
 - Google Ads: búsqueda por intención ("cuidado cabello rizado natural Spain")
+
+
+### Notas del desarrollador:
+- Hay que crear tabla de productos en db
+- Hay que crear una base de conocimiento y crear el bot y tambien para respuestas automaticas en whatsapp e instagram
+- Generar contenido en automatico
+- Generar canal youtube
