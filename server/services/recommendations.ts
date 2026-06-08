@@ -1,4 +1,4 @@
-import { genai } from '../lib/gemini'
+import { genai } from '../lib/gemini.js'
 
 export interface QuizAnswers {
   name?: string

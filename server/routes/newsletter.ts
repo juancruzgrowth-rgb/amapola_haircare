@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { createHmac } from 'crypto'
-import { supabaseAdmin } from '../lib/supabase-admin'
+import { supabaseAdmin } from '../lib/supabase-admin.js'
 
 const router = Router()
 

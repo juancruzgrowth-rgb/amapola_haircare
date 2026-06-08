@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { supabaseAdmin } from '../../lib/supabase-admin'
-import { answerCallbackQuery, sendMessage } from '../../services/telegram'
-import { sendBlogNewsletter } from '../../services/newsletter'
+import { supabaseAdmin } from '../../lib/supabase-admin.js'
+import { answerCallbackQuery, sendMessage } from '../../services/telegram.js'
+import { sendBlogNewsletter } from '../../services/newsletter.js'
 
 const router = Router()
 

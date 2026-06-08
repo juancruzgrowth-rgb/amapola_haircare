@@ -1,5 +1,5 @@
 import { Resend } from 'resend'
-import { Routine } from './recommendations'
+import { Routine } from './recommendations.js'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 

@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { generateBlogPost } from '../services/blog-generator'
-import { supabaseAdmin } from '../lib/supabase-admin'
+import { generateBlogPost } from '../services/blog-generator.js'
+import { supabaseAdmin } from '../lib/supabase-admin.js'
 
 const router = Router()
 

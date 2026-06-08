@@ -927,7 +927,7 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNa
 
         <CircularGallery items={reviewImages} radius={480} autoRotateSpeed={0.018} className="my-16 md:my-20" />
 
-        <div className="text-center mt-16">
+        <div className="text-center mt-28 md:mt-36">
           <ShinyButton
             onClick={() => onNavigate('quiz')}
             className="px-10 py-3"

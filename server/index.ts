@@ -1,9 +1,9 @@
 import 'dotenv/config'
 import express from 'express'
-import blogRouter from './routes/blog'
-import newsletterRouter from './routes/newsletter'
-import quizRouter from './routes/quiz'
-import telegramWebhookRouter from './routes/webhooks/telegram'
+import blogRouter from './routes/blog.js'
+import newsletterRouter from './routes/newsletter.js'
+import quizRouter from './routes/quiz.js'
+import telegramWebhookRouter from './routes/webhooks/telegram.js'
 
 const app = express()
 

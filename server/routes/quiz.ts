@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import { supabaseAdmin } from '../lib/supabase-admin'
-import { generateRecommendations, QuizAnswers } from '../services/recommendations'
-import { renderQuizPDF } from '../services/pdf'
-import { sendQuizRoutineEmail } from '../services/email-quiz'
+import { supabaseAdmin } from '../lib/supabase-admin.js'
+import { generateRecommendations, QuizAnswers } from '../services/recommendations.js'
+import { renderQuizPDF } from '../services/pdf.js'
+import { sendQuizRoutineEmail } from '../services/email-quiz.js'
 
 const router = Router()
 

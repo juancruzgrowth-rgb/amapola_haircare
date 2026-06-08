@@ -1,6 +1,6 @@
 import { createHmac } from 'crypto'
 import { Resend } from 'resend'
-import { supabaseAdmin } from '../lib/supabase-admin'
+import { supabaseAdmin } from '../lib/supabase-admin.js'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 

@@ -1,8 +1,8 @@
 import fs from 'fs'
 import path from 'path'
-import { supabaseAdmin } from '../lib/supabase-admin'
-import { genai } from '../lib/gemini'
-import { sendApprovalRequest } from './telegram'
+import { supabaseAdmin } from '../lib/supabase-admin.js'
+import { genai } from '../lib/gemini.js'
+import { sendApprovalRequest } from './telegram.js'
 
 /**
  * ABSOLUTE RULE — never override.

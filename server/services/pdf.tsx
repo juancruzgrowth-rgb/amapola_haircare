@@ -1,6 +1,6 @@
 import React from 'react'
 import { Document, Page, Text, View, StyleSheet, Font, renderToBuffer } from '@react-pdf/renderer'
-import { QuizAnswers, Routine } from './recommendations'
+import { QuizAnswers, Routine } from './recommendations.js'
 
 Font.register({
   family: 'Cormorant Garamond',
