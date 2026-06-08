@@ -678,6 +678,18 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNa
   const flowerIdRef = useRef(0);
   const lastFlowerTime = useRef(0);
 
+  // Últimas entradas reales del blog (con sus imágenes IA). Fallback a las estáticas si la API falla.
+  const [latestPosts, setLatestPosts] = useState<ApiBlogPost[]>([]);
+
+  useEffect(() => {
+    fetch('/api/blog/posts?limit=3')
+      .then(res => (res.ok ? res.json() : Promise.reject(new Error('blog fetch failed'))))
+      .then((data: ApiBlogPost[]) => {
+        if (Array.isArray(data) && data.length > 0) setLatestPosts(data);
+      })
+      .catch(() => {/* mantiene el fallback estático */});
+  }, []);
+
   const handleHeroMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const now = Date.now();
     if (now - lastFlowerTime.current < 100) return;
@@ -954,9 +966,22 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNa
       </div>
 
       <DisplayCards>
-        {BLOG_POSTS.map((post) => (
-          <DisplayCard key={post.id} {...post} onClick={() => onSelectPost(post.id)} />
-        ))}
+        {latestPosts.length > 0
+          ? latestPosts.map((post) => (
+              <DisplayCard
+                key={post.id}
+                title={post.title}
+                description={post.excerpt}
+                date={new Date(post.published_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+                author="Amapola"
+                image={post.image_url}
+                category={post.category}
+                onClick={() => onSelectPost(post.id)}
+              />
+            ))
+          : BLOG_POSTS.map((post) => (
+              <DisplayCard key={post.id} {...post} onClick={() => onSelectPost(post.id)} />
+            ))}
       </DisplayCards>
     </section>
 
@@ -1648,25 +1673,30 @@ const CartPage = ({
   };
 
   const buildWhatsAppMessage = () => {
-    const lines = items.map(i => `  • ${i.name} x${i.quantity} — ${(i.price * i.quantity).toFixed(2)}€`).join('\n');
+    const lines = items
+      .map(i => `• ${i.name} (x${i.quantity}) — ${(i.price * i.quantity).toFixed(2)}€`)
+      .join('\n');
     const addressDetail = [form.address, form.floor, form.postal ? `CP ${form.postal}` : '', 'Barcelona'].filter(Boolean).join(', ');
     const deliveryLine = deliveryType === 'delivery'
-      ? `Envio a domicilio (+${DELIVERY_FEE.toFixed(2)}€)\n  📍 ${addressDetail}`
-      : `Recogida en domicilio de la fundadora (gratis)`;
+      ? `🚚 Envío a domicilio (+${DELIVERY_FEE.toFixed(2)}€)\n📍 ${addressDetail}`
+      : `🏠 Recogida en domicilio de la fundadora (gratis)`;
     const paymentLine = paymentMethod === 'bizum'
-      ? `Bizum al ${BIZUM_DISPLAY}\n  Adjunto el comprobante a continuacion.`
-      : `En mano al recoger`;
+      ? `💳 Bizum al ${BIZUM_DISPLAY}\n🧾 Adjunto el comprobante a continuación.`
+      : `💶 En mano al recoger`;
     return encodeURIComponent(
-      `Hola! 👋 Quiero hacer este pedido:\n\n` +
-      `*Datos:*\n` +
-      `  • Nombre: ${form.name}\n` +
-      `  • Telefono: ${form.phone}\n\n` +
-      `*Productos:*\n${lines}\n\n` +
-      `*Entrega:* ${deliveryLine}\n\n` +
-      `*Pago:* ${paymentLine}\n\n` +
-      `  Envio: ${shipping === 0 ? 'Gratis (recogida)' : `${shipping.toFixed(2)}€`}\n` +
-      `  Total: ${total.toFixed(2)}€\n\n` +
-      `Podeis confirmarlo? ✅`
+      `🌸 *Nuevo pedido — Amapola* 🌸\n` +
+      `━━━━━━━━━━━━━━━\n\n` +
+      `👤 *Tus datos*\n` +
+      `• Nombre: ${form.name}\n` +
+      `• Teléfono: ${form.phone}\n\n` +
+      `🛍️ *Productos*\n${lines}\n\n` +
+      `📦 *Entrega*\n${deliveryLine}\n\n` +
+      `💰 *Pago*\n${paymentLine}\n\n` +
+      `🧮 *Resumen*\n` +
+      `• Subtotal: ${subtotal.toFixed(2)}€\n` +
+      `• Envío: ${shipping === 0 ? 'Gratis (recogida)' : `${shipping.toFixed(2)}€`}\n` +
+      `• *Total: ${total.toFixed(2)}€*\n\n` +
+      `¿Podéis confirmarlo? ✅`
     );
   };
 
@@ -1971,9 +2001,25 @@ export default function App() {
   const [activePage, setActivePage] = useState('home');
   const [selectedPostId, setSelectedPostId] = useState<string>('');
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    try {
+      const stored = localStorage.getItem('amapola_cart');
+      return stored ? (JSON.parse(stored) as CartItem[]) : [];
+    } catch {
+      return [];
+    }
+  });
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+
+  // Persistir el carrito para usuarios anónimos (no se pierde al recargar o navegar)
+  useEffect(() => {
+    try {
+      localStorage.setItem('amapola_cart', JSON.stringify(cart));
+    } catch {
+      /* localStorage no disponible (modo privado, etc.) — ignorar */
+    }
+  }, [cart]);
 
   const addToCart = (product: Product) => {
     setCart(prev => {
