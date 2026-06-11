@@ -6,6 +6,13 @@ import { sendBlogNewsletter } from '../../services/newsletter.js'
 const router = Router()
 
 router.post('/', async (req, res) => {
+  // Validate Telegram's secret token before doing anything.
+  // Telegram sends the value configured at setWebhook in this header.
+  const secret = process.env.TELEGRAM_WEBHOOK_SECRET
+  if (!secret || req.headers['x-telegram-bot-api-secret-token'] !== secret) {
+    return res.sendStatus(401)
+  }
+
   // Always respond 200 immediately to Telegram
   res.sendStatus(200)
 

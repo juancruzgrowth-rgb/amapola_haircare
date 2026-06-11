@@ -4,11 +4,15 @@ import { supabaseAdmin } from '../lib/supabase-admin.js'
 
 const router = Router()
 
-// POST /api/blog/generate — protected by BLOG_CRON_SECRET
+// POST /api/blog/generate — protected.
+// Vercel Cron auto-attaches `Authorization: Bearer ${CRON_SECRET}` when CRON_SECRET is set.
+// Manual triggers (curl/testing) use header `x-cron-secret: ${BLOG_CRON_SECRET}`.
 router.post('/generate', async (req, res) => {
-  const secret = req.headers['x-cron-secret']
-  const isVercel = req.headers['x-vercel-cron'] === '1'
-  if (!isVercel && secret !== process.env.BLOG_CRON_SECRET) {
+  const cronSecret = process.env.CRON_SECRET
+  const manualSecret = process.env.BLOG_CRON_SECRET
+  const fromVercelCron = !!cronSecret && req.headers.authorization === `Bearer ${cronSecret}`
+  const fromManual = !!manualSecret && req.headers['x-cron-secret'] === manualSecret
+  if (!fromVercelCron && !fromManual) {
     return res.status(401).json({ error: 'Unauthorized' })
   }
   try {

@@ -34,6 +34,7 @@ import { PRODUCTS, WHATSAPP_ORDER_NUMBER } from './constants';
 import { ShinyButton } from './components/ShinyButton';
 import { CircularGallery, GalleryItem } from './components/ui/circular-gallery';
 import { PrivacyPage, CookiesPage, TermsPage } from './components/LegalPages';
+import CookieBanner from './components/CookieBanner';
 import { Typewriter } from './components/Typewriter';
 import { DisplayCard, DisplayCards } from './components/DisplayCards';
 import { BlogDetailPage } from './components/blog/BlogDetailPage';
@@ -818,7 +819,7 @@ const Home = ({ onNavigate, onAddToCart, onSelectPost, onSelectProduct }: { onNa
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
           <span className="text-xs font-bold text-brand-primary uppercase tracking-[0.3em] mb-4 block">Lo más vendido</span>
-          <h2 className="text-4xl md:text-5xl font-serif mb-6">Productos estrella</h2>
+          <h2 className="text-4xl md:text-5xl font-serif mb-6">Los imprescindibles</h2>
           <p className="text-brand-text-light max-w-xl mx-auto">
             Los favoritos de nuestra comunidad para un cabello sano, brillante y lleno de vida.
           </p>
@@ -2144,6 +2145,8 @@ export default function App() {
       <Footer setActivePage={setActivePage} />
 
       <ChatbotButton />
+
+      <CookieBanner onOpenCookies={() => setActivePage('cookies')} />
 
       {/* Toast */}
       <AnimatePresence>

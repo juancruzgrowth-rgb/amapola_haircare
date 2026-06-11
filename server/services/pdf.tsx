@@ -566,8 +566,8 @@ const QuizPDF: React.FC<QuizPDFProps> = ({ name, answers, routine, appUrl }) => 
         </View>
         <Text style={[styles.ctaLabel, { marginBottom: 8 }]}>Síguenos</Text>
         <View style={styles.ctaSocial}>
-          <Text style={styles.ctaSocialItem}>Instagram · @amapolahaircare</Text>
-          <Text style={styles.ctaSocialItem}>TikTok · @amapolahaircare</Text>
+          <Text style={styles.ctaSocialItem}>Instagram · @amapola.haircare</Text>
+          <Text style={styles.ctaSocialItem}>TikTok · @amapola.haircare</Text>
         </View>
       </View>
     </Page>
@@ -580,7 +580,7 @@ export async function renderQuizPDF(
   answers: QuizAnswers,
   routine: Routine,
 ): Promise<Buffer> {
-  const appUrl = process.env.APP_URL ?? 'https://amapola.com'
+  const appUrl = process.env.APP_URL ?? 'https://amapolahaircare.com'
   const safeName = name?.trim() || 'Amapola'
   return await renderToBuffer(
     <QuizPDF name={safeName} answers={answers} routine={routine} appUrl={appUrl} />,
